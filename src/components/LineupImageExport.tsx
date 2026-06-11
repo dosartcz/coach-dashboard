@@ -156,21 +156,33 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
   if (story) {
     const entry = (slot: LineupSlot, i: number) => {
       if (!slot.player) return <div key={slot.id + i} style={{ flex: 1 }} />
-      const last = slot.player.name.trim().split(' ').slice(-1)[0]
+      const parts = slot.player.name.trim().split(' ')
+      const first = parts[0]
+      const last = parts.slice(-1)[0]
       return (
-        <div key={slot.id} style={{ display: 'flex', alignItems: 'baseline', gap: 12, flex: 1, minWidth: 0 }}>
-          <span style={{ fontFamily: DISPLAY_FONT, color: GOLD, fontWeight: 400, fontSize: 32, width: 52, textAlign: 'right', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
+        <div key={slot.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flex: 1, minWidth: 0 }}>
+          <span style={{ fontFamily: DISPLAY_FONT, color: GOLD, fontWeight: 400, fontSize: 48, lineHeight: 1, width: 58, textAlign: 'right', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
             {slot.player.tp_jersey_number}
           </span>
-          <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 26, fontWeight: 300 }}>|</span>
-          <span
-            style={{
-              fontFamily: DISPLAY_FONT, color: '#fff', fontWeight: 400, fontSize: 32, textTransform: 'uppercase',
-              letterSpacing: '0.05em', whiteSpace: 'nowrap', overflow: 'hidden',
-            }}
-          >
-            {last}
-          </span>
+          <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 48, fontWeight: 200, lineHeight: 1 }}>|</span>
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                fontFamily: DISPLAY_FONT, color: '#fff', fontWeight: 400, fontSize: last.length > 10 ? 26 : 32, lineHeight: 1, textTransform: 'uppercase',
+                letterSpacing: '0.05em', whiteSpace: 'nowrap', overflow: 'hidden',
+              }}
+            >
+              {last}
+            </div>
+            <div
+              style={{
+                fontSize: 19, fontWeight: 300, color: 'rgba(255,255,255,0.65)', marginTop: 2,
+                whiteSpace: 'nowrap', overflow: 'hidden',
+              }}
+            >
+              {first}
+            </div>
+          </div>
         </div>
       )
     }
@@ -212,7 +224,7 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
       <div
         style={{
           backgroundColor: '#111111',
-          backgroundImage: 'url(/revelstoke-bg-9-16.png)',
+          backgroundImage: 'linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), url(/revelstoke-bg-9-16.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           width: W,
@@ -232,9 +244,9 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
             <div style={{ fontFamily: DISPLAY_FONT, fontSize: 98, fontWeight: 400, lineHeight: 0.95 }}>LINEUP</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <TeamLogo teamId={ourTeamId} size={217} />
+            <TeamLogo teamId={ourTeamId} size={240} />
             {match.opponent_team_id ? (
-              <TeamLogo teamId={match.opponent_team_id} size={217} />
+              <TeamLogo teamId={match.opponent_team_id} size={240} />
             ) : (
               <span style={{ fontSize: 24, fontWeight: 700 }}>{match.opponent_name}</span>
             )}
