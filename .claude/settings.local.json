@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npm list *)",
+      "Bash(mkdir -p \"/Users/adamvandrovec/Claude files/coach-dashboard/src/app/api/matches/[id]/lineup\")",
+      "Bash(mkdir -p \"/Users/adamvandrovec/Claude files/coach-dashboard/src/app/api/manual-players/[id]\")",
+      "Bash(mkdir -p \"/Users/adamvandrovec/Claude files/coach-dashboard/src/app/api/player-notes/[id]\")",
+      "Bash(mkdir -p \"/Users/adamvandrovec/Claude files/coach-dashboard/src/app/api/events/[id]\")",
+      "Bash(mkdir -p \"/Users/adamvandrovec/Claude files/coach-dashboard/src/app/matches/[id]\")",
+      "Bash(mkdir -p \"/Users/adamvandrovec/Claude files/coach-dashboard/src/app/players/[id]\")",
+      "Bash(npm run *)"
+    ]
+  }
+}
