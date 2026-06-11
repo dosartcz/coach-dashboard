@@ -15,16 +15,18 @@ interface Props {
   suffix: string
   /** Illustration photo (data URL) — optional */
   photo?: string | null
+  /** Goals by period, home:away — e.g. "0:1, 1:1, 1:2" */
+  periodScores?: string | null
 }
 
 /** Final Score graphic, 1:1 — same visual language as the lineup export. */
-export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, theirScore, suffix, photo }: Props) {
+export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, theirScore, suffix, photo, periodScores }: Props) {
   const weAreHome = match.home_away === 'home'
   const homeScore = weAreHome ? ourScore : theirScore
   const awayScore = weAreHome ? theirScore : ourScore
 
   const dateLabel = new Date(match.date + 'T12:00:00').toLocaleDateString('en-CA', {
-    weekday: 'short', month: 'long', day: 'numeric',
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   })
   const metaItems = [dateLabel, venue].filter(Boolean)
 
@@ -58,7 +60,7 @@ export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, the
     >
       {/* Title */}
       <div style={{ fontFamily: DISPLAY_FONT, fontSize: 92, fontWeight: 400, lineHeight: 1, textAlign: 'center', letterSpacing: '0.04em', flexShrink: 0 }}>
-        FINAL SCORE
+        GAME RESULT
       </div>
 
       {/* Photo frame */}
@@ -101,10 +103,12 @@ export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, the
         <div style={{ width: 210, display: 'flex', justifyContent: 'center' }}>{awayLogo}</div>
       </div>
 
-      {/* Suffix (Final / OT / SO) */}
-      <div style={{ fontFamily: DISPLAY_FONT, fontSize: 28, color: GOLD, textAlign: 'center', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: -16, flexShrink: 0 }}>
-        {suffix === 'Final' ? 'FINAL' : `FINAL · ${suffix}`}
-      </div>
+      {/* Goals by period */}
+      {periodScores && (
+        <div style={{ fontSize: 26, color: 'rgba(255,255,255,0.65)', textAlign: 'center', marginTop: -20, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
+          ({periodScores})
+        </div>
+      )}
 
       {/* Footer — sponsor + hashtags */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 26, flexShrink: 0 }}>

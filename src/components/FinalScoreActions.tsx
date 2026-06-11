@@ -16,6 +16,8 @@ interface Props {
   ourTeamId: string
   /** null → no result yet, show the manual entry form */
   score: Score | null
+  /** Goals by period, home:away — e.g. "0:1, 1:1, 1:2" */
+  periodScores?: string | null
 }
 
 /** Downscale an uploaded photo to a reasonable JPEG data URL. */
@@ -29,7 +31,7 @@ async function fileToDataUrl(file: File, maxWidth = 1600): Promise<string> {
   return c.toDataURL('image/jpeg', 0.85)
 }
 
-export default function FinalScoreActions({ match, venue, ourTeamId, score }: Props) {
+export default function FinalScoreActions({ match, venue, ourTeamId, score, periodScores }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [busy, setBusy] = useState(false)
   const [photo, setPhoto] = useState<string | null>(match.result_photo ?? null)
@@ -272,6 +274,7 @@ export default function FinalScoreActions({ match, venue, ourTeamId, score }: Pr
               theirScore={score.theirScore}
               suffix={score.suffix}
               photo={photo}
+              periodScores={periodScores}
             />
           </div>
         </div>

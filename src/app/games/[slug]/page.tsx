@@ -212,6 +212,15 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ sl
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   })
 
+  // Goals by period for the result graphic — "home:away, home:away, …"
+  let periodScores: string | null = null
+  if (summary?.goalsByPeriod && summary.periods) {
+    const ids = Object.values(summary.periods).map((per) => per.id)
+    periodScores = ids
+      .map((pid) => `${summary!.goalsByPeriod.home?.[pid] ?? 0}:${summary!.goalsByPeriod.visitor?.[pid] ?? 0}`)
+      .join(', ')
+  }
+
   const clientCode = process.env.HT_CLIENT!
   const reportLinks = isApiGame
     ? {
@@ -260,7 +269,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ sl
       {isPast ? (
         scoreProps ? (
           <>
-            <FinalScoreActions match={match} venue={summary?.venue} ourTeamId={teamId} score={scoreProps} />
+            <FinalScoreActions match={match} venue={summary?.venue} ourTeamId={teamId} score={scoreProps} periodScores={periodScores} />
             <GameResult
               ourScore={scoreProps.ourScore}
               theirScore={scoreProps.theirScore}
