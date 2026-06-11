@@ -161,15 +161,15 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
       const last = parts.slice(-1)[0]
       return (
         <div key={slot.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flex: 1, minWidth: 0 }}>
-          <span style={{ fontFamily: DISPLAY_FONT, color: GOLD, fontWeight: 400, fontSize: 48, lineHeight: 1, width: 58, textAlign: 'right', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
+          <span style={{ fontFamily: DISPLAY_FONT, color: GOLD, fontWeight: 400, fontSize: 48, lineHeight: 1, width: 54, textAlign: 'right', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
             {slot.player.tp_jersey_number}
           </span>
           <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 48, fontWeight: 200, lineHeight: 1 }}>|</span>
           <div style={{ minWidth: 0 }}>
             <div
               style={{
-                fontFamily: DISPLAY_FONT, color: '#fff', fontWeight: 400, fontSize: last.length > 10 ? 26 : 32, lineHeight: 1, textTransform: 'uppercase',
-                letterSpacing: '0.05em', whiteSpace: 'nowrap', overflow: 'hidden',
+                fontFamily: DISPLAY_FONT, color: '#fff', fontWeight: 400, fontSize: 32, lineHeight: 1, textTransform: 'uppercase',
+                letterSpacing: '0.03em', whiteSpace: 'nowrap', overflow: 'hidden',
               }}
             >
               {last}
@@ -207,12 +207,12 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
       </div>
     )
 
-    const section = (label: string, rows: LineupSlot[][]) => (
+    const section = (label: string, rows: LineupSlot[][], rowWidth = '100%') => (
       <div>
-        <div style={{ marginBottom: 20 }}>{badge(label)}</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 26, minWidth: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>{badge(label)}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 26, minWidth: 0, width: '100%', margin: '0 auto' }}>
           {rows.map((row, ri) => (
-            <div key={ri} style={{ display: 'flex', gap: 20 }}>
+            <div key={ri} style={{ display: 'flex', gap: 20, width: rowWidth, margin: '0 auto' }}>
               {row.map((s, i) => entry(s, i))}
             </div>
           ))}
@@ -237,13 +237,9 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
           padding: 64,
         }}
       >
-        {/* Header — pushed down, phones overlay their UI at the top of stories */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, marginTop: 72 }}>
-          <div>
-            <div style={{ fontFamily: DISPLAY_FONT, fontSize: 98, fontWeight: 400, lineHeight: 0.95, color: 'rgba(255,255,255,0.6)' }}>STARTING</div>
-            <div style={{ fontFamily: DISPLAY_FONT, fontSize: 98, fontWeight: 400, lineHeight: 0.95 }}>LINEUP</div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        {/* Header — centered, pushed down below the phone UI zone */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, marginTop: 72 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
             <TeamLogo teamId={ourTeamId} size={240} />
             {match.opponent_team_id ? (
               <TeamLogo teamId={match.opponent_team_id} size={240} />
@@ -251,21 +247,19 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
               <span style={{ fontSize: 24, fontWeight: 700 }}>{match.opponent_name}</span>
             )}
           </div>
-        </div>
-        <div style={{ marginTop: 20, paddingBottom: 28 }}>
-          <div style={{ fontSize: 25, color: 'rgba(255,255,255,0.92)' }}>
-            {[dateLabel, match.time ? match.time.slice(0, 5) : null].filter(Boolean).join('  ·  ')}
+          <div style={{ fontFamily: DISPLAY_FONT, fontSize: 86, fontWeight: 400, lineHeight: 1, marginTop: 18, textAlign: 'center', whiteSpace: 'nowrap' }}>
+            STARTING LINEUP
           </div>
-          {venue && (
-            <div style={{ fontSize: 25, color: 'rgba(255,255,255,0.92)', marginTop: 6 }}>{venue}</div>
-          )}
+          <div style={{ fontSize: 25, color: 'rgba(255,255,255,0.92)', marginTop: 14, paddingBottom: 24, textAlign: 'center' }}>
+            {metaItems.join('  ·  ')}
+          </div>
         </div>
 
         {/* Sections */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', marginTop: 8, paddingBottom: 56 }}>
           {section('Offense', lines)}
-          {section('Defense', pairs)}
-          {section('Goalies', [goalies])}
+          {section('Defense', pairs, '66%')}
+          {section('Goalies', [goalies], '66%')}
         </div>
 
         {/* Footer */}
