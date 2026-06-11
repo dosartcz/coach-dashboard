@@ -41,6 +41,7 @@ export async function ensureSchema() {
   try { await db.execute('ALTER TABLE games ADD COLUMN overtime TEXT') } catch { }
   try { await db.execute('ALTER TABLE games ADD COLUMN shootout TEXT') } catch { }
   try { await db.execute('ALTER TABLE games ADD COLUMN final TEXT') } catch { }
+  try { await db.execute('ALTER TABLE games ADD COLUMN result_photo TEXT') } catch { }
 
   // Migration: add status column to player_settings
   try {

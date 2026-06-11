@@ -3,6 +3,7 @@ import { getDb, ensureSchema } from '@/lib/db'
 import { norm } from '@/lib/slug'
 import MatchLineupBuilder from '@/components/MatchLineupBuilder'
 import GameResult from '@/components/GameResult'
+import FinalScoreActions from '@/components/FinalScoreActions'
 import BackLink from '@/components/BackLink'
 import GameStats, { type GcSummary } from '@/components/GameStats'
 import type { Game, PlayerStats, RosterPlayer, LineupSlot, DbMatch } from '@/types/hockey'
@@ -44,6 +45,7 @@ async function getMatch(slug: string): Promise<DbMatch | null> {
     overtime: row.overtime as string | null,
     shootout: row.shootout as string | null,
     final: row.final as string | null,
+    result_photo: row.result_photo as string | null,
   }
 }
 
@@ -258,6 +260,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ sl
       {isPast ? (
         scoreProps ? (
           <>
+            <FinalScoreActions match={match} venue={summary?.venue} ourTeamId={teamId} score={scoreProps} />
             <GameResult
               ourScore={scoreProps.ourScore}
               theirScore={scoreProps.theirScore}
@@ -273,9 +276,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ sl
             {summary && <GameStats summary={summary} ourSide={match.home_away === 'home' ? 'home' : 'visitor'} />}
           </>
         ) : (
-          <div className="bg-white/5 rounded-xl border border-white/10 p-6 text-center text-white/30 text-sm">
-            {isApiGame ? 'No result available — run ↻ Sync League to fetch scores.' : 'No result recorded for this game.'}
-          </div>
+          <FinalScoreActions match={match} venue={summary?.venue} ourTeamId={teamId} score={null} />
         )
       ) : (
         <MatchLineupBuilder

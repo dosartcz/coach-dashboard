@@ -97,6 +97,16 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
     )
   }
 
+  const logoPair = () => {
+    const our = <TeamLogo key="us" teamId={ourTeamId} size={cfg.logo} />
+    const opp = match.opponent_team_id ? (
+      <TeamLogo key="opp" teamId={match.opponent_team_id} size={cfg.logo} />
+    ) : (
+      <span key="opp" style={{ fontSize: story ? 24 : 22, fontWeight: 700 }}>{match.opponent_name}</span>
+    )
+    return match.home_away === 'home' ? [our, opp] : [opp, our]
+  }
+
   const badge = (text: string) => (
     <div
       style={{
@@ -151,12 +161,7 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
       {story ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, marginTop: cfg.headerTop }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: cfg.logoGap }}>
-            <TeamLogo teamId={ourTeamId} size={cfg.logo} />
-            {match.opponent_team_id ? (
-              <TeamLogo teamId={match.opponent_team_id} size={cfg.logo} />
-            ) : (
-              <span style={{ fontSize: 24, fontWeight: 700 }}>{match.opponent_name}</span>
-            )}
+            {logoPair()}
           </div>
           <div style={{ fontFamily: DISPLAY_FONT, fontSize: cfg.title, fontWeight: 400, lineHeight: 1, marginTop: 18, textAlign: 'center', whiteSpace: 'nowrap' }}>
             STARTING LINEUP
@@ -176,12 +181,7 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: cfg.logoGap, flexShrink: 0, marginLeft: 24 }}>
-            <TeamLogo teamId={ourTeamId} size={cfg.logo} />
-            {match.opponent_team_id ? (
-              <TeamLogo teamId={match.opponent_team_id} size={cfg.logo} />
-            ) : (
-              <span style={{ fontSize: 22, fontWeight: 700 }}>{match.opponent_name}</span>
-            )}
+            {logoPair()}
           </div>
         </div>
       )}

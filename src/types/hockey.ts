@@ -108,6 +108,7 @@ export interface DbMatch {
   overtime?: string | null
   shootout?: string | null
   final?: string | null
+  result_photo?: string | null
 }
 
 export interface DbLineup {

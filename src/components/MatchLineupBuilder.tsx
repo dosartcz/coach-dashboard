@@ -409,7 +409,7 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, i
                 disabled={exporting || !(exportChecks.img1x1 || exportChecks.img9x16 || exportChecks.pdf)}
                 className="flex-1 bg-grizzly-gold text-white font-bold py-2 rounded hover:bg-grizzly-gold/90 transition-colors disabled:opacity-40"
               >
-                {exporting ? 'Working…' : 'Export'}
+                {exporting ? 'Working…' : 'Download'}
               </button>
               <button
                 type="button"
