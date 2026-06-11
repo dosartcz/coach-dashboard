@@ -29,7 +29,7 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
         w: 1080, h: 1920, pad: 64, bg: '/revelstoke-bg-9-16.png',
         headerTop: 72, logo: 240, logoGap: 32,
         title: 86, meta: 25,
-        badge: 21, badgeGapBottom: 20,
+        badge: 17, badgeGapBottom: 18,
         num: 48, numW: 54, sep: 48, last: 32, lastSmall: 26, first: 19,
         rowGap: 26, entryGap: 20, sectionsBottom: 56,
         footerTop: 26, sponsor: 52, tags: 21, tagGap: 28,
@@ -38,7 +38,7 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
         w: 1080, h: 1080, pad: 48, bg: '/revelstoke-bg-1-1.png',
         headerTop: 8, logo: 150, logoGap: 24,
         title: 64, meta: 20,
-        badge: 17, badgeGapBottom: 14,
+        badge: 14, badgeGapBottom: 12,
         num: 38, numW: 44, sep: 38, last: 26, lastSmall: 21, first: 16,
         rowGap: 16, entryGap: 16, sectionsBottom: 20,
         footerTop: 18, sponsor: 44, tags: 17, tagGap: 22,
@@ -110,7 +110,7 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
         letterSpacing: '0.25em',
         textTransform: 'uppercase',
         fontSize: cfg.badge,
-        padding: story ? '8px 20px' : '6px 16px',
+        padding: story ? '6px 16px' : '5px 13px',
       }}
     >
       {text}
@@ -147,26 +147,59 @@ export default function LineupImageExport({ slots, format, match, venue, ourTeam
         padding: cfg.pad,
       }}
     >
-      {/* Header — centered; in story it sits below the phone UI zone */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, marginTop: cfg.headerTop }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: cfg.logoGap }}>
-          <TeamLogo teamId={ourTeamId} size={cfg.logo} />
-          {match.opponent_team_id ? (
-            <TeamLogo teamId={match.opponent_team_id} size={cfg.logo} />
-          ) : (
-            <span style={{ fontSize: 24, fontWeight: 700 }}>{match.opponent_name}</span>
-          )}
+      {/* Header — story: centered below the phone UI zone; square: compact single row */}
+      {story ? (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, marginTop: cfg.headerTop }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: cfg.logoGap }}>
+            <TeamLogo teamId={ourTeamId} size={cfg.logo} />
+            {match.opponent_team_id ? (
+              <TeamLogo teamId={match.opponent_team_id} size={cfg.logo} />
+            ) : (
+              <span style={{ fontSize: 24, fontWeight: 700 }}>{match.opponent_name}</span>
+            )}
+          </div>
+          <div style={{ fontFamily: DISPLAY_FONT, fontSize: cfg.title, fontWeight: 400, lineHeight: 1, marginTop: 18, textAlign: 'center', whiteSpace: 'nowrap' }}>
+            STARTING LINEUP
+          </div>
+          <div style={{ fontSize: cfg.meta, color: 'rgba(255,255,255,0.65)', marginTop: 14, paddingBottom: 24, textAlign: 'center' }}>
+            {metaItems.join('  ·  ')}
+          </div>
         </div>
-        <div style={{ fontFamily: DISPLAY_FONT, fontSize: cfg.title, fontWeight: 400, lineHeight: 1, marginTop: story ? 18 : 12, textAlign: 'center', whiteSpace: 'nowrap' }}>
-          STARTING LINEUP
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, marginTop: cfg.headerTop, width: '86%', marginLeft: 'auto', marginRight: 'auto' }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontFamily: DISPLAY_FONT, fontSize: cfg.title, fontWeight: 400, lineHeight: 1, whiteSpace: 'nowrap' }}>
+              STARTING LINEUP
+            </div>
+            <div style={{ fontSize: cfg.meta, color: 'rgba(255,255,255,0.65)', marginTop: 10 }}>
+              {metaItems.join('  ·  ')}
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: cfg.logoGap, flexShrink: 0, marginLeft: 24 }}>
+            <TeamLogo teamId={ourTeamId} size={cfg.logo} />
+            {match.opponent_team_id ? (
+              <TeamLogo teamId={match.opponent_team_id} size={cfg.logo} />
+            ) : (
+              <span style={{ fontSize: 22, fontWeight: 700 }}>{match.opponent_name}</span>
+            )}
+          </div>
         </div>
-        <div style={{ fontSize: cfg.meta, color: 'rgba(255,255,255,0.65)', marginTop: story ? 14 : 10, paddingBottom: story ? 24 : 12, textAlign: 'center' }}>
-          {metaItems.join('  ·  ')}
-        </div>
-      </div>
+      )}
 
-      {/* Sections */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', marginTop: 8, paddingBottom: cfg.sectionsBottom }}>
+      {/* Sections — square: narrower block, more breathing room below the header */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-evenly',
+          marginTop: story ? 8 : 40,
+          paddingBottom: cfg.sectionsBottom,
+          width: story ? '100%' : '86%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
         {section('Offense', lines)}
         {section('Defense', pairs, '66%')}
         {section('Goalies', [goalies], '66%')}
