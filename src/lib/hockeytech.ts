@@ -25,8 +25,9 @@ function buildUrl(extra: Record<string, string>) {
  * Current season — detected automatically from the league feed:
  * 1. `HT_SEASON` env var, when set (manual override)
  * 2. the season whose start/end dates contain today (career seasons preferred)
- * 3. the league's own default season (Parameters.season_id) — covers the off-season
- * 4. the most recently started career season
+ * 3. off-season: the most recently FINISHED career season (e.g. last playoffs,
+ *    so "recent games" really are the latest games played)
+ * 4. the league's own default season (Parameters.season_id)
  */
 export async function getCurrentSeasonId(): Promise<string> {
   if (process.env.HT_SEASON) return process.env.HT_SEASON
@@ -42,13 +43,13 @@ export async function getCurrentSeasonId(): Promise<string> {
       seasons.find((s) => s.start_date <= today && today <= s.end_date)
     if (active) return active.season_id
 
+    const lastFinished = seasons
+      .filter((s) => s.career === '1' && s.end_date < today)
+      .sort((a, b) => b.end_date.localeCompare(a.end_date))[0]
+    if (lastFinished) return lastFinished.season_id
+
     const leagueDefault = data.SiteKit?.Parameters?.season_id
     if (leagueDefault) return String(leagueDefault)
-
-    const started = seasons
-      .filter((s) => s.career === '1' && s.start_date <= today)
-      .sort((a, b) => b.start_date.localeCompare(a.start_date))[0]
-    if (started) return started.season_id
   } catch { /* fall through */ }
   return '67' // last known season — only reached if the feed is down
 }
