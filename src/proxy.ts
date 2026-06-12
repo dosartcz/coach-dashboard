@@ -4,13 +4,14 @@ import { AUTH_COOKIE, computeToken, safeEqual } from '@/lib/auth'
 export default async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
-  // Public paths
+  // Public paths — static assets (club textures, icons) carry nothing sensitive
   if (
     pathname === '/login' ||
     pathname.startsWith('/api/auth/') ||
     pathname.startsWith('/api/img') ||
     pathname.startsWith('/_next/') ||
-    pathname === '/favicon.ico'
+    pathname === '/favicon.ico' ||
+    /\.(png|jpg|jpeg|webp|svg|ico|gif)$/.test(pathname)
   ) {
     return NextResponse.next()
   }

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef } from 'react'
-import { toPng } from 'html-to-image'
+import { renderNodeToPng } from '@/lib/exportImage'
 import FinalScoreImage from './FinalScoreImage'
 import type { DbMatch } from '@/types/hockey'
 
@@ -55,10 +55,7 @@ export default function FinalScoreActions({ match, venue, ourTeamId, score }: Pr
     }).catch(() => {})
   }
 
-  async function renderPng(node: HTMLDivElement | null): Promise<string | null> {
-    if (!node) return null
-    return toPng(node, { cacheBust: true, pixelRatio: 1 })
-  }
+  const renderPng = renderNodeToPng
 
   async function handleDownload() {
     setBusy(true)

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef, useCallback } from 'react'
-import { toPng } from 'html-to-image'
+import { renderNodeToPng } from '@/lib/exportImage'
 import LineupBuilder from './LineupBuilder'
 import SpecialTeamsBuilder, { blankSpecialSlots } from './SpecialTeamsBuilder'
 import LineupImageExport from './LineupImageExport'
@@ -73,8 +73,8 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, e
   }
 
   async function downloadPng(node: HTMLDivElement | null, filename: string) {
-    if (!node) return
-    const dataUrl = await toPng(node, { cacheBust: true, pixelRatio: 1 })
+    const dataUrl = await renderNodeToPng(node)
+    if (!dataUrl) return
     const link = document.createElement('a')
     link.download = filename
     link.href = dataUrl
@@ -83,8 +83,8 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, e
 
   /** Open the rendered image in a new tab instead of downloading — quick iteration. */
   async function previewPng(node: HTMLDivElement | null, title: string) {
-    if (!node) return
-    const dataUrl = await toPng(node, { cacheBust: true, pixelRatio: 1 })
+    const dataUrl = await renderNodeToPng(node)
+    if (!dataUrl) return
     const win = window.open('', '_blank')
     if (win) {
       win.document.write(

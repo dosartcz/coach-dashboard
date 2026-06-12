@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef } from 'react'
-import { toPng } from 'html-to-image'
+import { renderNodeToPng } from '@/lib/exportImage'
 import GameDayImage from './GameDayImage'
 import type { DbMatch } from '@/types/hockey'
 
@@ -43,10 +43,7 @@ export default function GameDayActions({ match, venue, ourTeamId, className = ''
     }).catch(() => {})
   }
 
-  async function renderPng(node: HTMLDivElement | null): Promise<string | null> {
-    if (!node) return null
-    return toPng(node, { cacheBust: true, pixelRatio: 1 })
-  }
+  const renderPng = renderNodeToPng
 
   async function handleDownload() {
     setBusy(true)

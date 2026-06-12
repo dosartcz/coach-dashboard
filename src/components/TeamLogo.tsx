@@ -66,7 +66,7 @@ export function TeamLogo({ teamId, size = 40, className }: { teamId: string; siz
     return () => { cancelled = true }
   }, [teamId])
 
-  if (!src) return <div className={className} style={{ width: size, height: size, flexShrink: 0 }} />
+  if (!src) return <div className={className} data-logo-loading style={{ width: size, height: size, flexShrink: 0 }} />
   // eslint-disable-next-line @next/next/no-img-element
   return (
     <img
