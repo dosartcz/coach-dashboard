@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { TeamLogo } from './TeamLogo'
 
 const NAV_ITEMS = [
@@ -13,6 +14,10 @@ const NAV_ITEMS = [
 /** App header — horizontal nav on desktop, burger menu on mobile. */
 export default function NavBar({ teamId }: { teamId: string }) {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+
+  // No navigation on the login screen
+  if (pathname === '/login') return null
 
   return (
     <header className="bg-grizzly-red border-b border-grizzly-gold/40">

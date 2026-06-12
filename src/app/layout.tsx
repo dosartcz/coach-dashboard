@@ -20,10 +20,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`bg-grizzly-navy min-h-screen text-white ${anton.variable}`}>
+      <body className={`bg-grizzly-navy min-h-screen flex flex-col text-white ${anton.variable}`}>
         <NavBar teamId={OUR_TEAM_ID} />
-        <main className="max-w-7xl mx-auto px-4 py-6">{children}</main>
-        <footer className="max-w-7xl mx-auto px-4 py-4 text-center text-xs text-white/30 border-t border-white/10 mt-8">
+        <main className="w-full max-w-7xl mx-auto px-4 py-6 flex-1">{children}</main>
+        <footer className="w-full max-w-7xl mx-auto px-4 py-4 text-center text-xs text-white/30 border-t border-white/10 mt-8">
           Official statistics provided by{' '}
           <a href="http://leaguestat.com" className="underline">
             Kootenay International Junior Hockey
