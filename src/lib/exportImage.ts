@@ -44,6 +44,17 @@ async function waitForAssets(node: HTMLElement, timeoutMs = 8000) {
 export async function renderNodeToPng(node: HTMLElement | null): Promise<string | null> {
   if (!node) return null
   await waitForAssets(node)
-  // No cacheBust: all assets are same-origin, so the warm browser cache is reused
-  return toPng(node, { pixelRatio: 1 })
+  // Safari/WebKit race: the first SVG→canvas pass often misses embedded images
+  // (backgrounds come out blank). Render multiple passes and keep the last one.
+  const isWebKit =
+    typeof navigator !== 'undefined' &&
+    /safari/i.test(navigator.userAgent) &&
+    !/chrome|chromium|android/i.test(navigator.userAgent)
+  const passes = isWebKit ? 3 : 1
+  let dataUrl = ''
+  for (let i = 0; i < passes; i++) {
+    // No cacheBust: all assets are same-origin, so the warm browser cache is reused
+    dataUrl = await toPng(node, { pixelRatio: 1 })
+  }
+  return dataUrl
 }
