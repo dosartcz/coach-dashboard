@@ -16,8 +16,6 @@ interface Props {
   ourTeamId: string
   /** null → no result yet, show the manual entry form */
   score: Score | null
-  /** Goals by period, home:away — e.g. "0:1, 1:1, 1:2" */
-  periodScores?: string | null
 }
 
 /** Downscale an uploaded photo to a reasonable JPEG data URL. */
@@ -31,7 +29,7 @@ async function fileToDataUrl(file: File, maxWidth = 1600): Promise<string> {
   return c.toDataURL('image/jpeg', 0.85)
 }
 
-export default function FinalScoreActions({ match, venue, ourTeamId, score, periodScores }: Props) {
+export default function FinalScoreActions({ match, venue, ourTeamId, score }: Props) {
   const [showExport, setShowExport] = useState(false)
   const [busy, setBusy] = useState(false)
   const [photo, setPhoto] = useState<string | null>(match.result_photo ?? null)
@@ -202,7 +200,7 @@ export default function FinalScoreActions({ match, venue, ourTeamId, score, peri
             {/* Photo upload */}
             <div className="mb-4">
               <label className="text-white/60 text-xs uppercase tracking-wider block mb-2">Photo</label>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 {photo && (
                   <div className="w-20 h-12 rounded overflow-hidden flex-shrink-0 border border-white/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -213,7 +211,7 @@ export default function FinalScoreActions({ match, venue, ourTeamId, score, peri
                   type="file"
                   accept="image/*"
                   onChange={(e) => handlePhotoUpload(e.target.files?.[0])}
-                  className="text-white/60 text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer"
+                  className="flex-1 min-w-0 text-white/60 text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer"
                 />
                 {photo && (
                   <button
@@ -226,7 +224,7 @@ export default function FinalScoreActions({ match, venue, ourTeamId, score, peri
                         body: JSON.stringify({ result_photo: null }),
                       }).catch(() => {})
                     }}
-                    className="text-white/30 hover:text-red-400 text-xs transition-colors"
+                    className="text-white/30 hover:text-red-400 text-xs transition-colors shrink-0"
                   >
                     Remove
                   </button>
@@ -274,7 +272,6 @@ export default function FinalScoreActions({ match, venue, ourTeamId, score, peri
               theirScore={score.theirScore}
               suffix={score.suffix}
               photo={photo}
-              periodScores={periodScores}
             />
           </div>
         </div>

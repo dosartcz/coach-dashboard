@@ -15,12 +15,12 @@ interface Props {
   suffix: string
   /** Illustration photo (data URL) — optional */
   photo?: string | null
-  /** Goals by period, home:away — e.g. "0:1, 1:1, 1:2" */
-  periodScores?: string | null
 }
 
 /** Final Score graphic, 1:1 — same visual language as the lineup export. */
-export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, theirScore, suffix, photo, periodScores }: Props) {
+export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, theirScore, suffix, photo }: Props) {
+  const won = ourScore > theirScore
+  const resultLabel = `${suffix === 'OT' ? 'OT ' : suffix === 'SO' ? 'SO ' : ''}${won ? 'WIN' : ourScore < theirScore ? 'LOSS' : 'TIE'}`
   const weAreHome = match.home_away === 'home'
   const homeScore = weAreHome ? ourScore : theirScore
   const awayScore = weAreHome ? theirScore : ourScore
@@ -88,27 +88,25 @@ export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, the
         </div>
       )}
 
-      {/* Score row — home team on the left */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 56 }}>
-        <div style={{ width: 210, display: 'flex', justifyContent: 'center' }}>{homeLogo}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 36 }}>
-          <span style={{ fontFamily: DISPLAY_FONT, fontSize: 190, fontWeight: 400, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
-            {homeScore}
-          </span>
-          <span style={{ fontSize: 130, fontWeight: 200, color: 'rgba(255,255,255,0.25)', lineHeight: 1 }}>|</span>
-          <span style={{ fontFamily: DISPLAY_FONT, fontSize: 190, fontWeight: 400, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
-            {awayScore}
-          </span>
+      {/* Score block — home team on the left, periods right below the numbers */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 56 }}>
+          <div style={{ width: 210, display: 'flex', justifyContent: 'center' }}>{homeLogo}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 36 }}>
+            <span style={{ fontFamily: DISPLAY_FONT, fontSize: 190, fontWeight: 400, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+              {homeScore}
+            </span>
+            <span style={{ fontSize: 130, fontWeight: 200, color: 'rgba(255,255,255,0.25)', lineHeight: 1 }}>|</span>
+            <span style={{ fontFamily: DISPLAY_FONT, fontSize: 190, fontWeight: 400, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+              {awayScore}
+            </span>
+          </div>
+          <div style={{ width: 210, display: 'flex', justifyContent: 'center' }}>{awayLogo}</div>
         </div>
-        <div style={{ width: 210, display: 'flex', justifyContent: 'center' }}>{awayLogo}</div>
+        <div style={{ fontFamily: DISPLAY_FONT, fontSize: 32, color: GOLD, textAlign: 'center', letterSpacing: '0.25em', marginTop: 22 }}>
+          {resultLabel}
+        </div>
       </div>
-
-      {/* Goals by period */}
-      {periodScores && (
-        <div style={{ fontSize: 26, color: 'rgba(255,255,255,0.65)', textAlign: 'center', marginTop: -20, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
-          ({periodScores})
-        </div>
-      )}
 
       {/* Footer — sponsor + hashtags */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 26, flexShrink: 0 }}>
