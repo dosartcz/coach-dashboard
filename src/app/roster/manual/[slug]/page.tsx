@@ -1,23 +1,9 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import type { ManualPlayer, PlayerNote } from '@/types/hockey'
+import PlayerSilhouette from '@/components/PlayerSilhouette'
 
 const NOTES_PER_PAGE = 5
-
-function norm(s: string) {
-  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
-
-function manualPlayerSlug(player: ManualPlayer): string {
-  const parts = player.name.trim().split(/\s+/)
-  const first = parts[0] ?? ''
-  const last = parts.slice(1).join(' ')
-  const yy = player.birthdate ? player.birthdate.slice(2, 4) : ''
-  const pieces = last ? [norm(last), norm(first)] : [norm(first)]
-  if (yy) pieces.push(yy)
-  pieces.push(String(player.id))
-  return pieces.join('-')
-}
 
 export default function ManualPlayerDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const [slug, setSlug] = useState('')
@@ -182,10 +168,7 @@ export default function ManualPlayerDetailPage({ params }: { params: Promise<{ s
               style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
             />
           ) : (
-            <svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" style={{ width: '55%', height: '55%' }}>
-              <ellipse cx="40" cy="28" rx="18" ry="20" fill="#d1d5db" />
-              <path d="M8 90 Q8 58 40 58 Q72 58 72 90Z" fill="#d1d5db" />
-            </svg>
+            <PlayerSilhouette scale="55%" />
           )}
         </div>
 

@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import type { PlayerNote } from '@/types/hockey'
+import { playerSlug } from '@/lib/slug'
+import PlayerSilhouette from '@/components/PlayerSilhouette'
 
 interface PlayerData {
   player_id: string
@@ -38,18 +40,6 @@ interface CareerRow {
 interface CareerSection {
   title: string
   data: CareerRow[]
-}
-
-function playerSlug(name: string, birthdateYear?: string): string {
-  const norm = (s: string) =>
-    s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-  const parts = name.trim().split(/\s+/)
-  const first = parts[0] ?? ''
-  const last = parts.slice(1).join(' ')
-  const yy = birthdateYear ? birthdateYear.slice(-2) : ''
-  const pieces = last ? [norm(last), norm(first)] : [norm(first)]
-  if (yy) pieces.push(yy)
-  return pieces.join('-')
 }
 
 const CAREER_COLS: { key: keyof CareerRow; label: string }[] = [
@@ -473,10 +463,7 @@ function PlayerPhoto({ playerId }: { playerId: string }) {
   if (err) {
     return (
       <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-        <svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" style={{ width: '70%', height: '70%' }}>
-          <ellipse cx="40" cy="28" rx="18" ry="20" fill="#d1d5db" />
-          <path d="M8 90 Q8 58 40 58 Q72 58 72 90Z" fill="#d1d5db" />
-        </svg>
+        <PlayerSilhouette />
       </div>
     )
   }

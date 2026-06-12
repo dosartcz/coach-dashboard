@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { ManualPlayer } from '@/types/hockey'
+import { playerSlug, manualPlayerSlug } from '@/lib/slug'
+import PlayerSilhouette from '@/components/PlayerSilhouette'
 
 interface ApiPlayer {
   player_id: string
@@ -22,10 +24,7 @@ function PlayerPhoto({ playerId }: { playerId: string }) {
   if (err) {
     return (
       <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-        <svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" style={{ width: '70%', height: '70%' }}>
-          <ellipse cx="40" cy="28" rx="18" ry="20" fill="#d1d5db" />
-          <path d="M8 90 Q8 58 40 58 Q72 58 72 90Z" fill="#d1d5db" />
-        </svg>
+        <PlayerSilhouette />
       </div>
     )
   }
@@ -48,31 +47,6 @@ interface AddPlayerForm {
   photo: string
   birthdate: string
   shoots: string
-}
-
-function norm(s: string) {
-  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
-
-function playerSlug(name: string, birthdateYear?: string): string {
-  const parts = name.trim().split(/\s+/)
-  const first = parts[0] ?? ''
-  const last = parts.slice(1).join(' ')
-  const yy = birthdateYear ? birthdateYear.slice(-2) : ''
-  const pieces = last ? [norm(last), norm(first)] : [norm(first)]
-  if (yy) pieces.push(yy)
-  return pieces.join('-')
-}
-
-function manualPlayerSlug(player: ManualPlayer): string {
-  const parts = player.name.trim().split(/\s+/)
-  const first = parts[0] ?? ''
-  const last = parts.slice(1).join(' ')
-  const yy = player.birthdate ? player.birthdate.slice(2, 4) : ''
-  const pieces = last ? [norm(last), norm(first)] : [norm(first)]
-  if (yy) pieces.push(yy)
-  pieces.push(String(player.id))
-  return pieces.join('-')
 }
 
 export default function PlayersPage() {
@@ -456,10 +430,7 @@ export default function PlayersPage() {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={player.photo} alt="" style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
                       ) : (
-                        <svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" style={{ width: '70%', height: '70%' }}>
-                          <ellipse cx="40" cy="28" rx="18" ry="20" fill="#d1d5db" />
-                          <path d="M8 90 Q8 58 40 58 Q72 58 72 90Z" fill="#d1d5db" />
-                        </svg>
+                        <PlayerSilhouette />
                       )}
                     </div>
                     {/* Name + position + status */}
