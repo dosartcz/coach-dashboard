@@ -8,11 +8,17 @@ export default function BackLink() {
 
   useEffect(() => {
     try {
-      const ref = document.referrer ? new URL(document.referrer) : null
-      if (!ref || ref.origin !== window.location.origin) return
-      if (ref.pathname === '/') setTarget({ href: '/', label: 'Dashboard' })
-      else if (ref.pathname.startsWith('/schedule')) setTarget({ href: '/schedule', label: 'Schedule' })
-      else if (ref.pathname.startsWith('/games')) setTarget({ href: '/games', label: 'Games' })
+      // Previous path tracked by NavBar (client-side navigation has no referrer);
+      // document.referrer covers full page loads
+      let prev = sessionStorage.getItem('gz_prev_path')
+      if (!prev && document.referrer) {
+        const ref = new URL(document.referrer)
+        if (ref.origin === window.location.origin) prev = ref.pathname
+      }
+      if (!prev) return
+      if (prev === '/') setTarget({ href: '/', label: 'Dashboard' })
+      else if (prev.startsWith('/schedule')) setTarget({ href: '/schedule', label: 'Schedule' })
+      else if (prev.startsWith('/games')) setTarget({ href: '/games', label: 'Games' })
     } catch { /* keep default */ }
   }, [])
 

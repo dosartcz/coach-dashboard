@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { TeamLogo } from './TeamLogo'
@@ -15,6 +15,16 @@ const NAV_ITEMS = [
 export default function NavBar({ teamId }: { teamId: string }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+
+  // Track the previous path for BackLink — client-side navigation
+  // (next/link) doesn't set document.referrer
+  useEffect(() => {
+    try {
+      const cur = sessionStorage.getItem('gz_cur_path')
+      if (cur && cur !== pathname) sessionStorage.setItem('gz_prev_path', cur)
+      sessionStorage.setItem('gz_cur_path', pathname)
+    } catch { /* private mode etc. */ }
+  }, [pathname])
 
   // No navigation on the login screen
   if (pathname === '/login') return null
