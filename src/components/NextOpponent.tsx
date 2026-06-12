@@ -82,7 +82,7 @@ export default async function NextOpponent({ opponentId, game, gameDayMatch }: P
     <div className="bg-white/5 rounded-xl overflow-hidden border border-white/10">
       {/* Hero header */}
       <div className="p-6 border-b border-white/10 flex items-center gap-6 bg-white">
-        <TeamLogo teamId={opponentId} size={88} />
+        <TeamLogo teamId={opponentId} size={120} />
         <div className="flex-1 min-w-0">
           <p className="text-grizzly-gold text-xs font-bold uppercase tracking-wider">Upcoming Game</p>
           <h2 className="text-gray-900 font-black text-3xl leading-tight mt-1 truncate">
