@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import Link from 'next/link'
 import { Anton } from 'next/font/google'
 import { TeamLogo } from '@/components/TeamLogo'
@@ -9,6 +9,12 @@ const anton = Anton({ weight: '400', subsets: ['latin'], variable: '--font-displ
 export const metadata: Metadata = {
   title: 'Revelstoke Grizzlies Dashboard',
   description: 'KIJHL – Revelstoke Grizzlies Coach Dashboard',
+  // Internal tool — keep out of search engines
+  robots: { index: false, follow: false },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#111111',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
