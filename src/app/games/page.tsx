@@ -167,7 +167,7 @@ export default function GamesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-white font-bold text-xl">Games</h2>
           <p className="text-white/40 text-sm mt-1">Manage games and lineups</p>
@@ -194,7 +194,7 @@ export default function GamesPage() {
 
       {/* Add game modal */}
       {showAdd && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[#1a1a1a] rounded-xl p-6 w-full max-w-md border border-white/10 relative">
             <button
               type="button"
@@ -400,16 +400,16 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
     <div className="relative group">
     <Link
       href={`/games/${matchSlug(game)}`}
-      className={`flex items-center gap-4 rounded-xl px-4 py-3 border transition-colors ${
+      className={`flex items-center gap-2 md:gap-4 rounded-xl px-3 md:px-4 py-3 border transition-colors ${
       past
         ? 'bg-white/5 border-white/10 hover:border-white/30'
         : 'bg-white border-white/20 hover:border-grizzly-gold/60'
     }`}>
       {/* Date + time */}
-      <div className="w-40 flex-shrink-0">
-        <div className={`text-sm font-bold ${past ? 'text-white/50' : 'text-black'}`}>
+      <div className="w-24 md:w-40 flex-shrink-0">
+        <div className={`text-xs md:text-sm font-bold ${past ? 'text-white/50' : 'text-black'}`}>
           {new Date(game.date + 'T12:00:00').toLocaleDateString('en-CA', { weekday: 'short', month: 'short', day: 'numeric' })}
-          {game.time && <span className={`ml-2 ${past ? 'text-white/30' : 'text-black/40'}`}>{game.time.slice(0, 5)}</span>}
+          {game.time && <span className={`ml-2 block md:inline ${past ? 'text-white/30' : 'text-black/40'}`}>{game.time.slice(0, 5)}</span>}
         </div>
       </div>
 
@@ -440,7 +440,7 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
       </div>
 
       {/* Result / lineup hint */}
-      <div className={`flex items-center gap-2 flex-shrink-0 ${past ? 'pr-5' : 'pr-36'}`}>
+      <div className={`flex items-center gap-2 flex-shrink-0 ${past ? 'pr-5' : 'pr-5 md:pr-36'}`}>
         {past ? (
           result && (
             <span className={`text-sm font-bold tabular-nums ${result.color}`}>
@@ -448,15 +448,15 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
             </span>
           )
         ) : (
-          <span className="bg-grizzly-gold text-white text-xs font-bold px-4 py-2 rounded group-hover:bg-grizzly-gold/90 transition-colors">
+          <span className="hidden md:inline-block bg-grizzly-gold text-white text-xs font-bold px-4 py-2 rounded group-hover:bg-grizzly-gold/90 transition-colors">
             Build Lineup
           </span>
         )}
       </div>
     </Link>
-    {/* Game Preview export — upcoming rows only, sibling of the link */}
+    {/* Game Preview export — upcoming rows only, sibling of the link (desktop only) */}
     {!past && ourTeamId && (
-      <div className="absolute right-10 inset-y-0 flex items-center">
+      <div className="absolute right-10 inset-y-0 hidden md:flex items-center">
         <GameDayActions match={game} venue={venue} ourTeamId={ourTeamId} />
       </div>
     )}

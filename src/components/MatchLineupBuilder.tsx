@@ -281,13 +281,13 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, e
   return (
     <div>
       {/* Tabs + controls */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex rounded-lg overflow-hidden bg-black/20">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:justify-between mb-4">
+        <div className="flex rounded-lg overflow-hidden bg-black/20 self-start max-w-full overflow-x-auto">
           {(['opening', 'alternative', 'special'] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-5 py-2 text-sm font-semibold transition-colors ${
+              className={`px-3 md:px-5 py-2 text-xs md:text-sm font-semibold whitespace-nowrap transition-colors ${
                 tab === t
                   ? 'bg-grizzly-red text-white'
                   : 'text-white/50 hover:text-white/80'
@@ -339,7 +339,7 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, e
 
       {/* Export modal */}
       {showExport && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[#1a1a1a] rounded-xl p-6 w-full max-w-md border border-white/10 relative">
             <button
               type="button"

@@ -220,28 +220,28 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ slug: s
         ← Roster
       </Link>
 
-      {/* Profile card — white bg, full width */}
-      <div className="bg-white rounded-xl overflow-hidden flex items-stretch shadow-lg gap-4" style={{ height: 160 }}>
+      {/* Profile card — white bg, full width (scales down on mobile) */}
+      <div className="bg-white rounded-xl overflow-hidden flex items-stretch shadow-lg gap-2 md:gap-4 h-24 md:h-40">
         {/* Jersey number — always square via aspect-ratio */}
         <div className="flex-shrink-0 self-stretch flex items-center justify-center" style={{ aspectRatio: '1 / 1', backgroundColor: '#87703e' }}>
-          <span className="text-white font-black leading-none" style={{ fontSize: '4rem' }}>
+          <span className="text-white font-black leading-none text-2xl md:text-[4rem]">
             #{player.tp_jersey_number}
           </span>
         </div>
 
         {/* Photo — wider than tall so cover crops from bottom only */}
-        <div className="flex-shrink-0 self-stretch overflow-hidden" style={{ width: 195 }}>
+        <div className="flex-shrink-0 self-stretch overflow-hidden w-[88px] md:w-[195px]">
           <PlayerPhoto playerId={player.player_id} />
         </div>
 
         {/* Name + details */}
-        <div className="flex-1 px-6 py-4 flex flex-col justify-center min-w-0">
-          <div className="leading-tight" style={{ fontSize: '3rem' }}>
+        <div className="flex-1 px-2 md:px-6 py-2 md:py-4 flex flex-col justify-center min-w-0">
+          <div className="leading-tight text-xl md:text-[3rem] truncate">
             <span className="text-gray-900 font-bold">{lastName}</span>
             <span className="text-gray-900 font-light">, {firstName}</span>
           </div>
           {bioItems.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-y-0.5 text-sm text-gray-700">
+            <div className="mt-1 md:mt-2 hidden sm:flex flex-wrap gap-y-0.5 text-xs md:text-sm text-gray-700">
               {bioItems.map((item, i) => (
                 <span key={i} className="flex items-center">
                   {i > 0 && <span className="mx-2 text-gray-400">|</span>}
@@ -253,18 +253,30 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ slug: s
         </div>
 
         {/* Status icon + Position — right edge */}
-        <div className="flex items-center gap-6 px-6 flex-shrink-0">
+        <div className="flex items-center gap-2 md:gap-6 px-2 md:px-6 flex-shrink-0">
           {playerStatus === 'injury' && (
-            <span className="font-black leading-none select-none" style={{ fontSize: '3rem', color: '#E8000D' }}>✚</span>
+            <span className="font-black leading-none select-none text-2xl md:text-[3rem]" style={{ color: '#E8000D' }}>✚</span>
           )}
           {playerStatus === 'not_available' && (
-            <span className="text-gray-900 font-black leading-none select-none" style={{ fontSize: '3rem' }}>⊘</span>
+            <span className="text-gray-900 font-black leading-none select-none text-2xl md:text-[3rem]">⊘</span>
           )}
-          <span className="text-gray-700 font-black leading-none" style={{ fontSize: '4rem' }}>
+          <span className="text-gray-700 font-black leading-none text-2xl md:text-[4rem]">
             {posLabel}
           </span>
         </div>
       </div>
+
+      {/* Bio details — mobile only (hidden inside the card there) */}
+      {bioItems.length > 0 && (
+        <div className="sm:hidden flex flex-wrap gap-y-0.5 text-xs text-white/60 -mt-3 px-1">
+          {bioItems.map((item, i) => (
+            <span key={i} className="flex items-center">
+              {i > 0 && <span className="mx-2 text-white/20">|</span>}
+              {item}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Career stats */}
       {careerSections.length > 0 ? (

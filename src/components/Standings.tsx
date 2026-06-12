@@ -31,8 +31,8 @@ export default async function Standings({ ourTeamId, opponentTeamId }: Props) {
       <p className="text-white/50 text-xs font-bold uppercase tracking-wider mb-3">League Standings</p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {divisions.map((div) => (
-          <div key={div.division} className="bg-white/5 border border-white/10 rounded-xl p-4">
-            <table className="w-full text-xs">
+          <div key={div.division} className="bg-white/5 border border-white/10 rounded-xl p-4 overflow-x-auto">
+            <table className="w-full text-xs min-w-[420px]">
               <thead>
                 <tr className="text-white/30">
                   <th className="text-left pb-2 font-bold text-white/50">{div.division}</th>

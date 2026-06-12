@@ -150,17 +150,17 @@ export default function ManualPlayerDetailPage({ params }: { params: Promise<{ s
         ← Roster
       </Link>
 
-      {/* Profile card */}
-      <div className="bg-white rounded-xl overflow-hidden flex items-stretch shadow-lg gap-4" style={{ height: 160 }}>
+      {/* Profile card (scales down on mobile) */}
+      <div className="bg-white rounded-xl overflow-hidden flex items-stretch shadow-lg gap-2 md:gap-4 h-24 md:h-40">
         {/* Jersey number */}
         <div className="flex-shrink-0 self-stretch flex items-center justify-center" style={{ aspectRatio: '1 / 1', backgroundColor: '#87703e' }}>
-          <span className="text-white font-black leading-none" style={{ fontSize: '4rem' }}>
+          <span className="text-white font-black leading-none text-2xl md:text-[4rem]">
             {player.jersey_number ? `#${player.jersey_number}` : '#'}
           </span>
         </div>
 
         {/* Photo or silhouette */}
-        <div className="flex-shrink-0 self-stretch overflow-hidden bg-gray-100 flex items-center justify-center" style={{ width: 195 }}>
+        <div className="flex-shrink-0 self-stretch overflow-hidden bg-gray-100 flex items-center justify-center w-[88px] md:w-[195px]">
           {player.photo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -174,8 +174,8 @@ export default function ManualPlayerDetailPage({ params }: { params: Promise<{ s
         </div>
 
         {/* Name + bio */}
-        <div className="flex-1 px-6 py-4 flex flex-col justify-center min-w-0">
-          <div className="leading-tight" style={{ fontSize: '3rem' }}>
+        <div className="flex-1 px-2 md:px-6 py-2 md:py-4 flex flex-col justify-center min-w-0">
+          <div className="leading-tight text-xl md:text-[3rem] truncate">
             <span className="text-gray-900 font-bold">{lastName}</span>
             <span className="text-gray-900 font-light">, {firstName}</span>
           </div>
@@ -185,7 +185,7 @@ export default function ManualPlayerDetailPage({ params }: { params: Promise<{ s
               player.birthdate,
             ].filter(Boolean) as string[]
             return items.length > 0 ? (
-              <div className="mt-2 flex flex-wrap gap-y-0.5 text-sm text-gray-700">
+              <div className="mt-1 md:mt-2 hidden sm:flex flex-wrap gap-y-0.5 text-xs md:text-sm text-gray-700">
                 {items.map((item, i) => (
                   <span key={i} className="flex items-center">
                     {i > 0 && <span className="mx-2 text-gray-400">|</span>}
@@ -194,24 +194,36 @@ export default function ManualPlayerDetailPage({ params }: { params: Promise<{ s
                 ))}
               </div>
             ) : (
-              <div className="mt-2 text-sm text-gray-400">Manually Added</div>
+              <div className="mt-1 md:mt-2 hidden sm:block text-xs md:text-sm text-gray-400">Manually Added</div>
             )
           })()}
         </div>
 
         {/* Status icon + Position */}
-        <div className="flex items-center gap-6 px-6 flex-shrink-0">
+        <div className="flex items-center gap-2 md:gap-6 px-2 md:px-6 flex-shrink-0">
           {playerStatus === 'injury' && (
-            <span className="font-black leading-none select-none" style={{ fontSize: '3rem', color: '#E8000D' }}>✚</span>
+            <span className="font-black leading-none select-none text-2xl md:text-[3rem]" style={{ color: '#E8000D' }}>✚</span>
           )}
           {playerStatus === 'not_available' && (
-            <span className="text-gray-900 font-black leading-none select-none" style={{ fontSize: '3rem' }}>⊘</span>
+            <span className="text-gray-900 font-black leading-none select-none text-2xl md:text-[3rem]">⊘</span>
           )}
-          <span className="text-gray-700 font-black leading-none" style={{ fontSize: '4rem' }}>
+          <span className="text-gray-700 font-black leading-none text-2xl md:text-[4rem]">
             {posLabel}
           </span>
         </div>
       </div>
+
+      {/* Bio details — mobile only (hidden inside the card there) */}
+      {(player.shoots || player.birthdate) && (
+        <div className="sm:hidden flex flex-wrap gap-y-0.5 text-xs text-white/60 -mt-3 px-1">
+          {[player.shoots && `Shoots ${player.shoots}`, player.birthdate].filter(Boolean).map((item, i) => (
+            <span key={i} className="flex items-center">
+              {i > 0 && <span className="mx-2 text-white/20">|</span>}
+              {item}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Status + Position — side by side */}
       <div className="flex flex-col sm:flex-row gap-4">

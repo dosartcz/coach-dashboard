@@ -142,6 +142,7 @@ export default function GameStats({ summary, ourSide }: Props) {
       {/* Score & shots by period */}
       <div className="bg-white/5 rounded-xl p-5 border border-white/10">
         <h3 className={SECTION_TITLE}>Score &amp; Shots by Period</h3>
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-white/30 text-xs">
@@ -172,6 +173,7 @@ export default function GameStats({ summary, ourSide }: Props) {
             ))}
           </tbody>
         </table>
+        </div>
         <p className="text-white/40 text-xs mt-3">
           Goals (shots on goal) · Power play: {us.code} {summary.powerPlayGoals[ourSide]}/{summary.powerPlayCount[ourSide]}
           {' · '}{them.code} {summary.powerPlayGoals[theirSide]}/{summary.powerPlayCount[theirSide]}
@@ -181,7 +183,7 @@ export default function GameStats({ summary, ourSide }: Props) {
       {/* Scoring — two columns by team, grouped by period */}
       <div className="bg-white/5 rounded-xl p-5 border border-white/10">
         <h3 className={SECTION_TITLE}>Scoring</h3>
-        <div className="grid grid-cols-2 gap-x-6 mb-2">
+        <div className="hidden sm:grid grid-cols-2 gap-x-6 mb-2">
           <p className="text-grizzly-gold text-sm font-bold">{us.name}</p>
           <p className="text-white/70 text-sm font-bold">{them.name}</p>
         </div>
@@ -193,13 +195,15 @@ export default function GameStats({ summary, ourSide }: Props) {
               {periodGoals.length === 0 ? (
                 <p className="text-white/20 text-xs py-1">No scoring</p>
               ) : (
-                <div className="grid grid-cols-2 gap-x-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                   <div>
+                    <p className="sm:hidden text-grizzly-gold text-xs font-bold mb-1">{us.code}</p>
                     {periodGoals
                       .filter((g) => (String(g.home) === '1') === (ourSide === 'home'))
                       .map((g, i) => <GoalEntry key={i} g={g} />)}
                   </div>
                   <div>
+                    <p className="sm:hidden text-white/50 text-xs font-bold mb-1">{them.code}</p>
                     {periodGoals
                       .filter((g) => (String(g.home) === '1') !== (ourSide === 'home'))
                       .map((g, i) => <GoalEntry key={i} g={g} />)}
@@ -248,7 +252,7 @@ export default function GameStats({ summary, ourSide }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="bg-white/5 rounded-xl p-5 border border-white/10 lg:col-span-2">
           <h3 className={SECTION_TITLE}>Goalies</h3>
-          <div className="grid grid-cols-2 gap-x-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
             {([ourSide, theirSide] as const).map((side) => (
               <div key={side}>
                 <p className={`text-sm font-bold mb-2 ${side === ourSide ? 'text-grizzly-gold' : 'text-white/70'}`}>

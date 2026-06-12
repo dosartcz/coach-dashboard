@@ -6,7 +6,7 @@ Stav k 10. 6. 2026. TypeScript prochází bez chyb. Rozhodnutí: UI kompletně a
 
 ## P1 — Funkční chyby a bezpečnost
 
-> Stav 10. 6. 2026: ✅ 1 (login + proxy), ✅ 3 (výsledky z DB, + sloupce shootout/final), ✅ 4 (vráceno původní řádkové zobrazení, mrtvý kód smazán), ✅ 5, ✅ 6. — 2 (mobil) odloženo na konec, 7 (rok narození) se řešit nebude.
+> Stav 12. 6. 2026: ✅ 1 (login + proxy), ✅ 2 (mobilní grid + celé responzivní zobrazení), ✅ 3 (výsledky z DB, + sloupce shootout/final), ✅ 4 (vráceno původní řádkové zobrazení, mrtvý kód smazán), ✅ 5, ✅ 6. — 7 (rok narození) se řešit nebude.
 
 **1. Žádná autentizace.** Všechny API routes (POST/PUT/DELETE na games, lineups, notes, players, events) jsou veřejné. Kdokoliv se zná URL nasazené aplikace, může smazat zápasy, sestavy i poznámky. Minimálně basic auth / middleware s heslem, ideálně před celou aplikací. Souvisí: chybí `noindex` — interní nástroj by neměl být indexovaný.
 
@@ -30,11 +30,11 @@ Stav k 10. 6. 2026. TypeScript prochází bez chyb. Rozhodnutí: UI kompletně a
 
 **9. NextOpponent zobrazuje název sezóny místo soupeře.** `NextOpponent.tsx:35` — pod „Next Opponent" se vypisuje `rosterData.seasonName`. Má tam být jméno týmu (město + přezdívka).
 
-**10. Výsledek „T" (remíza).** `ScheduleWidget` a games page počítají s remízou — v junior hokeji neexistuje (OT/SO vždy rozhodne). Spíš kosmetika, ale label „T" mate.
+**10. ✅ Výsledek „T" (remíza)** — odstraněno (games page, GameResult, FinalScoreImage), v junior hokeji remíza neexistuje.
 
-**11. Hardcoded ID týmu „19".** Logo v `layout.tsx` a v PNG exportu má napevno `kijhl/logos/19.jpg`, přitom existuje `TEAM_ID` v env. Při změně týmu se rozbije.
+**11. ✅ Hardcoded ID týmu „19"** — layout i login berou `TEAM_ID` z env (s fallbackem „19").
 
-**12. Chybí zadání místa/poznámky k manuálnímu zápasu na dashboardu.** Manuální zápas na dashboardu nezobrazuje čas, jen datum.
+**12. ✅ Čas manuálního zápasu na dashboardu** — zobrazuje se vedle data (vyřešeno při redesignu dashboardu).
 
 **13. ✅ Mix češtiny v UI — sjednoceno na EN (UI texty i komentáře v kódu).**
 - `page.tsx` (dashboard): „Otevřít sestavu →" + datum v `cs-CZ` (zbytek aplikace `en-CA`)
@@ -42,18 +42,13 @@ Stav k 10. 6. 2026. TypeScript prochází bez chyb. Rozhodnutí: UI kompletně a
 - `PlayerStatsWithToggle` + `TopScorersWithToggle`: tab „Základní část" → „Regular Season"
 - české komentáře v kódu (Číslo, Foto, Jméno…) — nevadí funkčně, ale sjednotit
 
-**14. Duplicitní kód.**
-- `EMPTY_LINEUP` definovaný 2× (LineupBuilder, MatchLineupBuilder)
-- `playerSlug`/`norm` definované 2× (roster/page, roster/[slug]/page) — při změně logiky se rozjedou a rozbijí se URL
-- `TeamLogo` existuje 2× (components/TeamLogo.tsx a lokálně v GameResult.tsx)
-- silueta hráče (SVG) zkopírovaná 3×
-→ vytáhnout do `src/lib/slug.ts` a sdílených komponent
+**14. ✅ Duplicitní kód** — `playerSlug`/`manualPlayerSlug`/`norm` v `lib/slug.ts`, silueta hráče ve sdílené komponentě `PlayerSilhouette`. (`EMPTY_LINEUP` i `TeamLogo` už byly sjednocené z dřívějška.)
 
-**15. Navigace přes `<a>` místo `next/link`.** Každý klik = full page reload. Nahradit `Link` — okamžitá navigace, zachová se scroll stav.
+**15. ✅ Navigace přes `next/link`** — všechny interní odkazy převedeny na `Link` (externí linky a logout zůstávají `<a>`).
 
-**16. Nekonzistentní feedback při synci.** Games page: `alert()`. Schedule page: inline text. Roster: nic. Sjednotit (inline text/toast, žádné alerty).
+**16. ✅ Feedback při synci sjednocen** — games page nyní inline text jako schedule, žádné `alert()` při synci.
 
-**17. PDF export — diakritika.** jsPDF s vestavěnou helveticou neumí české/evropské znaky; jména s diakritikou (např. evropští hráči) se vykreslí špatně. Buď embedovat font (Roboto/Inter TTF), nebo akceptovat ASCII-only.
+**17. ✅ PDF export — diakritika** — jména se normalizují na ASCII (Müller → Muller) před vykreslením v jsPDF.
 
 ---
 
@@ -61,7 +56,7 @@ Stav k 10. 6. 2026. TypeScript prochází bez chyb. Rozhodnutí: UI kompletně a
 
 **18. Nekonzistentní světlé/tmavé karty.** Roster karty a nadcházející zápasy = bílé, minulé zápasy a vše ostatní = tmavé sklo (`bg-white/5`). Působí to nahodile. Rozhodnout: bílé karty jen pro „aktivní/akční" prvky, nebo sjednotit vše na tmavou.
 
-**19. Barvy událostí mimo paletu.** Kalendář: training = modrá, meeting = fialová — neladí s klubovou navy/red/gold. Navrhnout odstíny z palety (např. gold pro training, desaturovaná red pro meeting).
+**19. ✅ Barvy událostí z klubové palety** — training = gold, meeting = desaturovaná red, game = red.
 
 **20. Typografie.** Žádný vlastní font — systémový default. `globals.css` je prázdný. Zvážit jeden display font pro čísla dresů/nadpisy (např. Archivo/Inter via `next/font`) a definovat škálu velikostí — teď se míchá `text-xs`, `text-[10px]`, `text-[11px]`, inline `fontSize: '1.2rem'`…
 
@@ -69,15 +64,15 @@ Stav k 10. 6. 2026. TypeScript prochází bez chyb. Rozhodnutí: UI kompletně a
 
 **22. Chybějící stavy.** Loading je všude jen text „Loading…" — zvážit skeleton karty. Prázdné stavy OK.
 
-**23. Mobil obecně.** Hlavička s navigací se na úzkém displeji nevejde (4 položky + logo, žádný hamburger/zalomení). Tabulky statistik mají `overflow-x-auto` (OK), ale profilová karta hráče (fixní výška 160, foto 195px) se na mobilu rozbije.
+**23. ✅ Mobil** — navbar se zalamuje (logo nahoře, navigace pod ním, horizontální scroll), profilové karty hráčů se zmenšují (h-24, menší fonty, bio pod kartou), hero na dashboardu se skládá pod sebe, řádky games kompaktnější (Build Lineup hint a Game Preview button jen na desktopu), GameStats skóre/góly/gólmani stackují do jednoho sloupce, standings mají horizontální scroll, modaly mají okrajový padding. Lineup builder se na mobilu skládá do jednoho sloupce (drag & drop editace zůstává primárně desktopová).
 
-**24. Favicon a meta.** Chybí favicon/ikona, `theme-color`, og: tagy. U interního nástroje stačí favicon + theme-color + `noindex`.
+**24. ✅ Favicon a meta** — favicon (RG monogram), `theme-color #111111`, `noindex` přes metadata.robots.
 
 ---
 
 ## Drobnosti
 
-- `package.json` name `kijhl-dashboard` vs. titulek „Revelstoke Grizzlies Dashboard" — sjednotit
+- ✅ `package.json` name → `grizzlies-coach-dashboard`
 - fotky manuálních hráčů se ukládají jako base64 do DB — funguje, ale poroste velikost řádků; pro pár hráčů OK
 - `confirm()` dialogy pro mazání — funkční, ale nekonzistentní se zbytkem designu
 - kalendář začíná nedělí (kanadská konvence) — nechat, tým je kanadský

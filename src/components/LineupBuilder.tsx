@@ -328,7 +328,7 @@ export default function LineupBuilder({
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-1 gap-4 xl:grid" style={{ gridTemplateColumns: 'minmax(0,3fr) minmax(0,7fr)' }}>
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,3fr)_minmax(0,7fr)]">
 
         {/* Player pool */}
         <div className="bg-white/5 rounded-xl p-4">

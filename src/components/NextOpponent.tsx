@@ -82,26 +82,30 @@ export default async function NextOpponent({ opponentId, game, gameDayMatch }: P
   return (
     <div className="bg-white/5 rounded-xl overflow-hidden border border-white/10">
       {/* Hero header */}
-      <div className="p-6 border-b border-white/10 flex items-center gap-6 bg-white">
-        <TeamLogo teamId={opponentId} size={120} />
-        <div className="flex-1 min-w-0">
-          <p className="text-grizzly-gold text-xs font-bold uppercase tracking-wider">Upcoming Game</p>
-          <h2 className="text-gray-900 font-black text-3xl leading-tight mt-1 truncate">
-            {game.opponentName}
-          </h2>
-          <p className="text-gray-500 text-sm mt-2">{detailItems.join(' · ')}</p>
-          <Countdown date={game.date} time={game.time} />
+      <div className="p-4 md:p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center gap-4 md:gap-6 bg-white">
+        <div className="flex items-center gap-4 min-w-0 flex-1">
+          <div className="shrink-0 scale-75 sm:scale-100 origin-left -my-3 sm:my-0">
+            <TeamLogo teamId={opponentId} size={120} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-grizzly-gold text-xs font-bold uppercase tracking-wider">Upcoming Game</p>
+            <h2 className="text-gray-900 font-black text-2xl md:text-3xl leading-tight mt-1 truncate">
+              {game.opponentName}
+            </h2>
+            <p className="text-gray-500 text-sm mt-2">{detailItems.join(' · ')}</p>
+            <Countdown date={game.date} time={game.time} />
+          </div>
         </div>
-        <div className="flex flex-col items-stretch gap-2 flex-shrink-0 w-36">
+        <div className="flex sm:flex-col items-stretch gap-2 flex-shrink-0 w-full sm:w-36">
           {game.lineupHref && (
             <Link
               href={game.lineupHref}
-              className="bg-grizzly-gold text-white text-xs font-bold px-4 py-2 rounded hover:bg-grizzly-gold/90 transition-colors text-center"
+              className="flex-1 sm:flex-none bg-grizzly-gold text-white text-xs font-bold px-4 py-2 rounded hover:bg-grizzly-gold/90 transition-colors text-center"
             >
               Build Lineup
             </Link>
           )}
-          {gameDayMatch && <GameDayActions match={gameDayMatch} venue={game.venue} ourTeamId={ourId} className="w-full" />}
+          {gameDayMatch && <GameDayActions match={gameDayMatch} venue={game.venue} ourTeamId={ourId} className="flex-1 sm:flex-none sm:w-full" />}
         </div>
       </div>
 

@@ -230,7 +230,7 @@ export default function SchedulePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-white font-bold text-xl">Schedule</h2>
           <p className="text-white/40 text-sm mt-1">Calendar view of games and events</p>
@@ -257,7 +257,7 @@ export default function SchedulePage() {
 
       {/* Add event modal */}
       {showAdd && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-[#1a1a1a] rounded-xl p-6 w-full max-w-md border border-white/10 relative">
             <button
               type="button"

@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`bg-grizzly-navy min-h-screen text-white ${anton.variable}`}>
         <header className="bg-grizzly-red border-b border-grizzly-gold/40">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
               <TeamLogo teamId={process.env.TEAM_ID ?? '19'} size={40} />
               <div>
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <p className="text-grizzly-gold text-xs font-medium">Revelstoke Grizzlies</p>
               </div>
             </div>
-            <nav className="flex gap-1">
+            <nav className="flex gap-1 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible">
               {[
                 { href: '/', label: 'Dashboard' },
                 { href: '/roster', label: 'Roster' },
@@ -40,14 +40,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link
                   key={label}
                   href={href}
-                  className="px-4 py-2 rounded text-sm font-medium text-white/80 hover:text-grizzly-gold hover:bg-white/5 transition-colors"
+                  className="px-3 md:px-4 py-2 rounded text-sm font-medium whitespace-nowrap text-white/80 hover:text-grizzly-gold hover:bg-white/5 transition-colors"
                 >
                   {label}
                 </Link>
               ))}
               <a
                 href="/api/auth/logout"
-                className="px-4 py-2 rounded text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 transition-colors"
+                className="px-3 md:px-4 py-2 rounded text-sm font-medium whitespace-nowrap text-white/40 hover:text-white hover:bg-white/5 transition-colors"
                 title="Sign out"
               >
                 Sign out
