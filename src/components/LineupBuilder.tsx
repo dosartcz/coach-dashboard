@@ -113,7 +113,7 @@ export function DraggablePoolCard({ player }: { player: RosterPlayer }) {
 
   const [firstName, ...rest] = player.name.trim().split(' ')
   const lastName = rest.join(' ') || firstName
-  // If full "Příjmení, Jméno" is too long → show only the first-name initial
+  // If full "Lastname, Firstname" is too long → show only the first-name initial
   // (threshold must kick in before CSS truncate clips the text visually)
   const displayFirst = `${lastName}, ${firstName}`.length > 15 ? `${firstName[0]}.` : firstName
   const posLabel = player.position_override ?? player.position
@@ -138,17 +138,17 @@ export function DraggablePoolCard({ player }: { player: RosterPlayer }) {
         <span className="text-xs font-bold text-black leading-none">{posLabel}</span>
       </div>
 
-      {/* Číslo */}
+      {/* Number */}
       <div className="flex-shrink-0 w-14 flex items-center justify-center text-grizzly-gold font-black leading-none tabular-nums" style={{ fontSize: '1.4rem' }}>
         #{player.tp_jersey_number}
       </div>
 
-      {/* Foto — 100% height */}
+      {/* Photo — 100% height */}
       <div className="flex-shrink-0 w-14 ml-1 bg-black/5">
         <SquarePhoto playerId={player.player_id} src={player.photo} fullHeight />
       </div>
 
-      {/* Jméno — vertically centered */}
+      {/* Name — vertically centered */}
       <div className="flex-1 flex flex-col justify-center pl-2 pr-8 min-w-0">
         <div className="leading-tight truncate" style={{ fontSize: '1.35rem' }}>
           <span className="font-bold text-black">{lastName}</span>
@@ -178,15 +178,15 @@ export function DraggableSlotCard({ slotId, player }: { slotId: string; player: 
       suppressHydrationWarning
       className={`flex items-stretch w-full flex-1 overflow-hidden cursor-grab active:cursor-grabbing select-none transition-opacity bg-white ${isDragging ? 'opacity-30' : ''}`}
     >
-      {/* Číslo */}
+      {/* Number */}
       <div className="flex-shrink-0 w-16 flex items-center justify-center text-grizzly-gold font-black leading-none tabular-nums pl-3 relative z-10" style={{ fontSize: '2rem' }}>
         #{player.tp_jersey_number}
       </div>
-      {/* Foto — 100% height */}
+      {/* Photo — 100% height */}
       <div className="flex-shrink-0 w-20 bg-black/5 self-stretch relative z-0">
         <SquarePhoto playerId={player.player_id} src={player.photo} fullHeight />
       </div>
-      {/* Jméno */}
+      {/* Name */}
       <div className="flex-1 flex flex-col justify-center pl-3 pr-2 min-w-0">
         <span className="font-bold text-black leading-tight truncate" style={{ fontSize: '1rem' }}>{lastName}</span>
         <span className="font-light text-black/60 leading-tight truncate" style={{ fontSize: '1rem' }}>{firstName}</span>
@@ -205,11 +205,11 @@ export function SlotCell({
   onClear: (slotId: string) => void
   dragPosition?: 'F' | 'D' | 'G' | null
 }) {
-  // Fyzická blokace: brankář jen na G slot, F/D ne na G slot
+  // Hard block: goalies only on G slots, skaters never on G slots
   const isDisabled = dragPosition != null && (
     dragPosition === 'G' ? slot.position !== 'G' : slot.position === 'G'
   )
-  // Vizuální ztmavení: všechny neodpovídající pozice
+  // Visual dimming: every non-matching position
   const isDimmed = dragPosition != null && dragPosition !== slot.position
   const { setNodeRef, isOver } = useDroppable({ id: slot.id, disabled: isDisabled })
   return (
@@ -416,15 +416,15 @@ export default function LineupBuilder({
       <DragOverlay>
         {activePlayer && (
           <div className="flex items-stretch overflow-hidden rounded-lg bg-white shadow-xl" style={{ height: 56, width: 240 }}>
-            {/* Číslo */}
+            {/* Number */}
             <div className="flex-shrink-0 w-14 flex items-center justify-center text-grizzly-gold font-black leading-none tabular-nums" style={{ fontSize: '1.4rem' }}>
               #{activePlayer.tp_jersey_number}
             </div>
-            {/* Foto */}
+            {/* Photo */}
             <div className="flex-shrink-0 w-12 bg-black/5 ml-3">
               <SquarePhoto playerId={activePlayer.player_id} src={activePlayer.photo} fullHeight />
             </div>
-            {/* Jméno */}
+            {/* Name */}
             <div className="flex-1 flex flex-col justify-center pl-3 pr-2 min-w-0">
               <span className="font-bold text-black truncate" style={{ fontSize: '1.2rem' }}>
                 {activePlayer.name.trim().split(' ').slice(-1)[0]}
