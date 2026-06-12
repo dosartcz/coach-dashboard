@@ -407,7 +407,7 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
     }`}>
       {/* Date + time */}
       <div className="md:w-40 flex-shrink-0 text-center md:text-left">
-        <div className={`text-xs md:text-sm font-bold ${past ? 'text-white/50' : 'text-black'}`}>
+        <div className={`text-base md:text-sm font-bold ${past ? 'text-white/50' : 'text-black'}`}>
           {new Date(game.date + 'T12:00:00').toLocaleDateString('en-CA', { weekday: 'short', month: 'short', day: 'numeric' })}
           {game.time && <span className={`ml-2 ${past ? 'text-white/30' : 'text-black/40'}`}>{game.time.slice(0, 5)}</span>}
         </div>
@@ -426,7 +426,8 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
       <div className="flex flex-col md:flex-row items-center gap-1.5 md:gap-3 flex-1 min-w-0 md:ml-2">
         {game.opponent_team_id && (
           <span style={{ opacity: past ? 0.6 : 1 }} className="shrink-0">
-            <TeamLogo teamId={game.opponent_team_id} size={28} />
+            <span className="md:hidden"><TeamLogo teamId={game.opponent_team_id} size={64} /></span>
+            <span className="hidden md:inline"><TeamLogo teamId={game.opponent_team_id} size={28} /></span>
           </span>
         )}
         <div className="min-w-0 text-center md:text-left">
