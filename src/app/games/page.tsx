@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react'
 import type { DbMatch } from '@/types/hockey'
 import { matchSlug } from '@/lib/slug'
 import { TeamLogo } from '@/components/TeamLogo'
+import GameDayActions from '@/components/GameDayActions'
 
 interface LeagueTeam {
   id: string
@@ -52,6 +53,8 @@ export default function GamesPage() {
   const [teams, setTeams] = useState<LeagueTeam[]>([])
   const [upcomingPage, setUpcomingPage] = useState(0)
   const [pastPage, setPastPage] = useState(0)
+  const [ourTeamId, setOurTeamId] = useState<string | null>(null)
+  const [venueMap, setVenueMap] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
   const PAGE_SIZE = 8
@@ -87,6 +90,21 @@ export default function GamesPage() {
   }, [today])
 
   useEffect(() => { loadGames() }, [loadGames])
+
+  // Team id + venues for the Game Preview export
+  useEffect(() => {
+    fetch('/api/config').then((r) => r.json()).then((c) => setOurTeamId(c.teamId)).catch(() => {})
+    fetch('/api/schedule')
+      .then((r) => r.json())
+      .then((d) => {
+        const map: Record<string, string> = {}
+        for (const g of [...(d.upcoming ?? []), ...(d.past ?? [])]) {
+          if (g.game_id && g.venue_name) map[String(g.game_id)] = g.venue_name
+        }
+        setVenueMap(map)
+      })
+      .catch(() => {})
+  }, [])
 
   async function handleSync() {
     setSyncing(true)
@@ -300,7 +318,14 @@ export default function GamesPage() {
               <h3 className="text-grizzly-gold text-xs font-bold uppercase tracking-wider mb-3">Upcoming</h3>
               <div className="space-y-2">
                 {upcoming.map((m) => (
-                  <GameRow key={m.id} game={m} onDelete={() => handleDelete(m.id)} result={gameResult(m)} />
+                  <GameRow
+                    key={m.id}
+                    game={m}
+                    onDelete={() => handleDelete(m.id)}
+                    result={gameResult(m)}
+                    ourTeamId={ourTeamId}
+                    venue={m.api_game_id ? venueMap[m.api_game_id] : undefined}
+                  />
                 ))}
               </div>
               {upcomingTotalPages > 1 && (
@@ -363,7 +388,7 @@ export default function GamesPage() {
   )
 }
 
-function GameRow({ game, onDelete, past, result }: { game: DbMatch; onDelete: () => void; past?: boolean; result?: GameResult }) {
+function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbMatch; onDelete: () => void; past?: boolean; result?: GameResult; ourTeamId?: string | null; venue?: string }) {
   const canDelete = !(past && game.type === 'api')
   return (
     <div className="relative group">
@@ -409,7 +434,7 @@ function GameRow({ game, onDelete, past, result }: { game: DbMatch; onDelete: ()
       </div>
 
       {/* Result / lineup hint */}
-      <div className="flex items-center gap-2 flex-shrink-0 pr-5">
+      <div className={`flex items-center gap-2 flex-shrink-0 ${past ? 'pr-5' : 'pr-36'}`}>
         {past ? (
           result && (
             <span className={`text-sm font-bold tabular-nums ${result.color}`}>
@@ -423,6 +448,12 @@ function GameRow({ game, onDelete, past, result }: { game: DbMatch; onDelete: ()
         )}
       </div>
     </a>
+    {/* Game Preview export — upcoming rows only, sibling of the link */}
+    {!past && ourTeamId && (
+      <div className="absolute right-10 top-1/2 -translate-y-1/2">
+        <GameDayActions match={game} venue={venue} ourTeamId={ourTeamId} />
+      </div>
+    )}
     {/* Delete — sibling of the link (a button must not be nested in an anchor) */}
     {canDelete && (
       <button

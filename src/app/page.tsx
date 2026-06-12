@@ -131,7 +131,7 @@ export default async function DashboardPage() {
   const birthdays = await getBirthdayAlerts(teamId)
 
   // Hero props
-  let hero: { opponentId: string; game: NextGameInfo } | null = null
+  let hero: { opponentId: string; game: NextGameInfo; gameDayMatch: DbMatch | null } | null = null
   if (nextGame && nextOpponentId) {
     const dbMatch = await getDbMatchByApiId(nextGame.game_id)
     const isHome = nextGame.home_team === teamId
@@ -146,6 +146,7 @@ export default async function DashboardPage() {
         opponentName: isHome ? nextGame.visiting_team_name : nextGame.home_team_name,
         lineupHref: dbMatch ? `/games/${matchSlug(dbMatch)}` : undefined,
       },
+      gameDayMatch: dbMatch,
     }
   } else if (nextManualMatch?.opponent_team_id) {
     hero = {
@@ -160,6 +161,7 @@ export default async function DashboardPage() {
         opponentName: nextManualMatch.opponent_name,
         lineupHref: `/games/${matchSlug(nextManualMatch)}`,
       },
+      gameDayMatch: nextManualMatch,
     }
   }
 
@@ -186,7 +188,7 @@ export default async function DashboardPage() {
 
       {/* Next opponent — hero */}
       {hero ? (
-        <NextOpponent opponentId={hero.opponentId} game={hero.game} />
+        <NextOpponent opponentId={hero.opponentId} game={hero.game} gameDayMatch={hero.gameDayMatch} />
       ) : nextManualMatch ? (
         <div className="bg-white/5 rounded-xl border border-white/10 p-6 flex flex-col gap-2">
           <p className="text-grizzly-gold text-xs font-bold uppercase tracking-wider">Next Game</p>

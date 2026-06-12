@@ -2,7 +2,8 @@ import { fetchPlayerStats, fetchSeasonIds, fetchSchedule, fetchSeasons } from '@
 import { TeamLogo } from './TeamLogo'
 import TopScorersWithToggle from './TopScorersWithToggle'
 import Countdown from './Countdown'
-import type { Game, PlayerStats } from '@/types/hockey'
+import GameDayActions from './GameDayActions'
+import type { Game, PlayerStats, DbMatch } from '@/types/hockey'
 
 export interface NextGameInfo {
   /** YYYY-MM-DD — used for the countdown */
@@ -18,9 +19,11 @@ export interface NextGameInfo {
 interface Props {
   opponentId: string
   game: NextGameInfo
+  /** DB row of the next game — enables the Game Preview export from the hero */
+  gameDayMatch?: DbMatch | null
 }
 
-export default async function NextOpponent({ opponentId, game }: Props) {
+export default async function NextOpponent({ opponentId, game, gameDayMatch }: Props) {
   const [scheduleData, statsData, { regular, playoffs }] = await Promise.all([
     fetchSchedule(opponentId).catch(() => null),
     fetchPlayerStats(opponentId),
@@ -88,14 +91,17 @@ export default async function NextOpponent({ opponentId, game }: Props) {
           <p className="text-gray-500 text-sm mt-2">{detailItems.join(' · ')}</p>
           <Countdown date={game.date} time={game.time} />
         </div>
-        {game.lineupHref && (
-          <a
-            href={game.lineupHref}
-            className="flex-shrink-0 bg-grizzly-gold text-white text-sm font-bold px-5 py-2.5 rounded hover:bg-grizzly-gold/90 transition-colors"
-          >
-            Build Lineup
-          </a>
-        )}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {gameDayMatch && <GameDayActions match={gameDayMatch} venue={game.venue} ourTeamId={ourId} />}
+          {game.lineupHref && (
+            <a
+              href={game.lineupHref}
+              className="bg-grizzly-gold text-white text-sm font-bold px-5 py-2.5 rounded hover:bg-grizzly-gold/90 transition-colors"
+            >
+              Build Lineup
+            </a>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/10">

@@ -14,7 +14,7 @@ interface Props {
   photo?: string | null
 }
 
-/** Game Day announcement graphic, 1:1 — same visual language as the other exports. */
+/** Game Preview announcement graphic, 1:1 — same visual language as the other exports. */
 export default function GameDayImage({ match, venue, ourTeamId, photo }: Props) {
   const weAreHome = match.home_away === 'home'
 
@@ -58,7 +58,7 @@ export default function GameDayImage({ match, venue, ourTeamId, photo }: Props) 
     >
       {/* Title */}
       <div style={{ fontFamily: DISPLAY_FONT, fontSize: 92, fontWeight: 400, lineHeight: 1, textAlign: 'center', letterSpacing: '0.04em', flexShrink: 0 }}>
-        GAME DAY
+        GAME PREVIEW
       </div>
 
       {/* Photo frame */}

@@ -21,7 +21,7 @@ async function fileToDataUrl(file: File, maxWidth = 1600): Promise<string> {
   return c.toDataURL('image/jpeg', 0.85)
 }
 
-/** "Game Day" announce image export for upcoming games — button + modal. */
+/** "Game Preview" announce image export for upcoming games — button + modal. */
 export default function GameDayActions({ match, venue, ourTeamId }: Props) {
   const [show, setShow] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -50,7 +50,7 @@ export default function GameDayActions({ match, venue, ourTeamId }: Props) {
       const dataUrl = await renderPng()
       if (!dataUrl) return
       const link = document.createElement('a')
-      link.download = `grizzlies-game-day-${match.date}.png`
+      link.download = `grizzlies-game-preview-${match.date}.png`
       link.href = dataUrl
       link.click()
     } catch (err) {
@@ -69,7 +69,7 @@ export default function GameDayActions({ match, venue, ourTeamId }: Props) {
       const win = window.open('', '_blank')
       if (win) {
         win.document.write(
-          `<html><head><title>Game Day</title></head>` +
+          `<html><head><title>Game Preview</title></head>` +
           `<body style="margin:0;background:#1a1a1a;display:flex;align-items:flex-start;justify-content:center">` +
           `<img src="${dataUrl}" style="max-width:100%;max-height:100vh;height:auto"></body></html>`
         )
@@ -86,7 +86,7 @@ export default function GameDayActions({ match, venue, ourTeamId }: Props) {
         onClick={() => setShow(true)}
         className="bg-[#2e2e2e] text-white text-xs font-bold px-4 py-2 rounded hover:bg-[#3a3a3a] transition-colors"
       >
-        Game Day
+        Game Preview
       </button>
 
       {show && (
@@ -100,7 +100,7 @@ export default function GameDayActions({ match, venue, ourTeamId }: Props) {
             >
               ✕
             </button>
-            <h3 className="text-white font-bold text-lg mb-1">Game Day — Image</h3>
+            <h3 className="text-white font-bold text-lg mb-1">Game Preview — Image</h3>
             <p className="text-white/40 text-xs mb-4">Square 1:1 with logos, date, venue and an optional photo.</p>
 
             {/* Photo upload */}
