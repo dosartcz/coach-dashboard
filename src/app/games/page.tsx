@@ -442,15 +442,15 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
             </span>
           )
         ) : (
-          <span className="border border-black/20 text-black text-xs font-bold px-3 py-1.5 rounded group-hover:bg-grizzly-gold group-hover:border-grizzly-gold group-hover:text-white transition-colors">
-            Lineup
+          <span className="bg-grizzly-gold text-white text-xs font-bold px-4 py-2 rounded group-hover:bg-grizzly-gold/90 transition-colors">
+            Build Lineup
           </span>
         )}
       </div>
     </a>
     {/* Game Preview export — upcoming rows only, sibling of the link */}
     {!past && ourTeamId && (
-      <div className="absolute right-10 top-1/2 -translate-y-1/2">
+      <div className="absolute right-10 inset-y-0 flex items-center">
         <GameDayActions match={game} venue={venue} ourTeamId={ourTeamId} />
       </div>
     )}
