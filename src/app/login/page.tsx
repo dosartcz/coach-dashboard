@@ -31,9 +31,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center">
+    <div
+      className="min-h-[80vh] flex items-center justify-center rounded-xl overflow-hidden"
+      style={{
+        backgroundImage: 'linear-gradient(rgba(10,10,10,0.55), rgba(10,10,10,0.55)), url(/grizzlies-login-bg.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
       <div className="w-full max-w-sm">
-        <div className="bg-white/5 border border-white/10 rounded-xl p-8">
+        <div className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-xl p-8">
           <div className="flex flex-col items-center mb-6">
             <div className="mb-3"><TeamLogo teamId="19" size={64} /></div>
             <h1 className="text-white font-bold text-lg">Coach Dashboard</h1>

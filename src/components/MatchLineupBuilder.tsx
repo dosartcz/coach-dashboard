@@ -11,6 +11,8 @@ interface Props {
   players: RosterPlayer[]
   venue?: string | null
   ourTeamId: string
+  /** Extra button(s) rendered next to Export (e.g. the Game Day export) */
+  extraAction?: React.ReactNode
   initialOpening: LineupSlot[] | null
   initialAlternative: LineupSlot[] | null
   initialSpecial: LineupSlot[] | null
@@ -45,7 +47,7 @@ function blankSlots(): LineupSlot[] {
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
-export default function MatchLineupBuilder({ match, players, venue, ourTeamId, initialOpening, initialAlternative, initialSpecial }: Props) {
+export default function MatchLineupBuilder({ match, players, venue, ourTeamId, extraAction, initialOpening, initialAlternative, initialSpecial }: Props) {
   const [tab, setTab] = useState<'opening' | 'alternative' | 'special'>('opening')
   const [opening, setOpening] = useState<LineupSlot[]>(initialOpening ?? blankSlots())
   const [alternative, setAlternative] = useState<LineupSlot[]>(initialAlternative ?? blankSlots())
@@ -298,6 +300,7 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, i
               {statusText}
             </span>
           )}
+          {extraAction}
           <button
             onClick={openExport}
             className="bg-grizzly-gold text-white text-xs font-bold px-5 py-2 rounded hover:bg-grizzly-gold/90 transition-colors"

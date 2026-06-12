@@ -4,6 +4,7 @@ import { norm } from '@/lib/slug'
 import MatchLineupBuilder from '@/components/MatchLineupBuilder'
 import GameResult from '@/components/GameResult'
 import FinalScoreActions from '@/components/FinalScoreActions'
+import GameDayActions from '@/components/GameDayActions'
 import BackLink from '@/components/BackLink'
 import GameStats, { type GcSummary } from '@/components/GameStats'
 import type { Game, PlayerStats, RosterPlayer, LineupSlot, DbMatch } from '@/types/hockey'
@@ -284,6 +285,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ sl
           players={players}
           venue={upcomingVenue}
           ourTeamId={teamId}
+          extraAction={<GameDayActions match={match} venue={upcomingVenue} ourTeamId={teamId} />}
           initialOpening={openingSlots}
           initialAlternative={alternativeSlots}
           initialSpecial={specialSlots}

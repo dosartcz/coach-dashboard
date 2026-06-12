@@ -10,25 +10,21 @@ interface Props {
   match: DbMatch
   venue?: string | null
   ourTeamId: string
-  ourScore: number
-  theirScore: number
-  suffix: string
   /** Illustration photo (data URL) — optional */
   photo?: string | null
 }
 
-/** Final Score graphic, 1:1 — same visual language as the lineup export. */
-export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, theirScore, suffix, photo }: Props) {
-  const won = ourScore > theirScore
-  const resultLabel = `${suffix === 'OT' ? 'OT ' : suffix === 'SO' ? 'SO ' : ''}${won ? 'WIN' : ourScore < theirScore ? 'LOSS' : 'TIE'}`
+/** Game Day announcement graphic, 1:1 — same visual language as the other exports. */
+export default function GameDayImage({ match, venue, ourTeamId, photo }: Props) {
   const weAreHome = match.home_away === 'home'
-  const homeScore = weAreHome ? ourScore : theirScore
-  const awayScore = weAreHome ? theirScore : ourScore
 
   const dateLabel = new Date(match.date + 'T12:00:00').toLocaleDateString('en-CA', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   })
-  const metaItems = [dateLabel, venue].filter(Boolean)
+  const metaItems = [
+    [dateLabel, match.time ? match.time.slice(0, 5) : null].filter(Boolean).join('  ·  '),
+    venue,
+  ].filter(Boolean)
 
   // Light white outline around the logo's alpha shape (4-direction drop-shadow)
   const outline = {
@@ -37,16 +33,11 @@ export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, the
       'drop-shadow(0 4px 0 rgba(255,255,255,0.8)) drop-shadow(0 -4px 0 rgba(255,255,255,0.8))',
   }
 
-  const homeLogo = weAreHome
-    ? <div style={outline}><TeamLogo teamId={ourTeamId} size={210} /></div>
-    : match.opponent_team_id
-      ? <div style={outline}><TeamLogo teamId={match.opponent_team_id} size={210} /></div>
-      : <span style={{ fontSize: 26, fontWeight: 700, textAlign: 'center' }}>{match.opponent_name}</span>
-  const awayLogo = weAreHome
-    ? match.opponent_team_id
-      ? <div style={outline}><TeamLogo teamId={match.opponent_team_id} size={210} /></div>
-      : <span style={{ fontSize: 26, fontWeight: 700, textAlign: 'center' }}>{match.opponent_name}</span>
-    : <div style={outline}><TeamLogo teamId={ourTeamId} size={210} /></div>
+  const ourLogo = <div style={outline}><TeamLogo teamId={ourTeamId} size={230} /></div>
+  const oppLogo = match.opponent_team_id
+    ? <div style={outline}><TeamLogo teamId={match.opponent_team_id} size={230} /></div>
+    : <span style={{ fontSize: 28, fontWeight: 700, textAlign: 'center' }}>{match.opponent_name}</span>
+  const [leftLogo, rightLogo] = weAreHome ? [ourLogo, oppLogo] : [oppLogo, ourLogo]
 
   return (
     <div
@@ -67,7 +58,7 @@ export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, the
     >
       {/* Title */}
       <div style={{ fontFamily: DISPLAY_FONT, fontSize: 92, fontWeight: 400, lineHeight: 1, textAlign: 'center', letterSpacing: '0.04em', flexShrink: 0 }}>
-        GAME RESULT
+        GAME DAY
       </div>
 
       {/* Photo frame */}
@@ -95,24 +86,11 @@ export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, the
         </div>
       )}
 
-      {/* Score block — home team on the left, periods right below the numbers */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 56 }}>
-          <div style={{ width: 210, display: 'flex', justifyContent: 'center' }}>{homeLogo}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 36 }}>
-            <span style={{ fontFamily: DISPLAY_FONT, fontSize: 190, fontWeight: 400, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
-              {homeScore}
-            </span>
-            <span style={{ fontSize: 130, fontWeight: 200, color: 'rgba(255,255,255,0.25)', lineHeight: 1 }}>|</span>
-            <span style={{ fontFamily: DISPLAY_FONT, fontSize: 190, fontWeight: 400, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
-              {awayScore}
-            </span>
-          </div>
-          <div style={{ width: 210, display: 'flex', justifyContent: 'center' }}>{awayLogo}</div>
-        </div>
-        <div style={{ fontFamily: DISPLAY_FONT, fontSize: 32, color: GOLD, textAlign: 'center', letterSpacing: '0.25em', marginTop: 22 }}>
-          {resultLabel}
-        </div>
+      {/* Matchup — home team on the left */}
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 64 }}>
+        <div style={{ width: 230, display: 'flex', justifyContent: 'center' }}>{leftLogo}</div>
+        <span style={{ fontFamily: DISPLAY_FONT, fontSize: 72, color: GOLD, lineHeight: 1 }}>VS</span>
+        <div style={{ width: 230, display: 'flex', justifyContent: 'center' }}>{rightLogo}</div>
       </div>
 
       {/* Footer — sponsor + hashtags */}

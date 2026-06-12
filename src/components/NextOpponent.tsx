@@ -1,9 +1,12 @@
 import { fetchPlayerStats, fetchSeasonIds, fetchSchedule, fetchSeasons } from '@/lib/hockeytech'
 import { TeamLogo } from './TeamLogo'
 import TopScorersWithToggle from './TopScorersWithToggle'
+import Countdown from './Countdown'
 import type { Game, PlayerStats } from '@/types/hockey'
 
 export interface NextGameInfo {
+  /** YYYY-MM-DD — used for the countdown */
+  date: string
   dateLabel: string
   time?: string | null
   venue?: string | null
@@ -83,13 +86,14 @@ export default async function NextOpponent({ opponentId, game }: Props) {
             {game.opponentName}
           </h2>
           <p className="text-gray-500 text-sm mt-2">{detailItems.join(' · ')}</p>
+          <Countdown date={game.date} time={game.time} />
         </div>
         {game.lineupHref && (
           <a
             href={game.lineupHref}
             className="flex-shrink-0 bg-grizzly-gold text-white text-sm font-bold px-5 py-2.5 rounded hover:bg-grizzly-gold/90 transition-colors"
           >
-            Build Lineup →
+            Build Lineup
           </a>
         )}
       </div>

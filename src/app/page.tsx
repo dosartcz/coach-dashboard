@@ -1,4 +1,4 @@
-import { fetchSchedule, fetchPlayerStats, fetchSeasonIds } from '@/lib/hockeytech'
+import { fetchSchedule, fetchPlayerStats, fetchSeasonIds, fetchRoster } from '@/lib/hockeytech'
 import { getDb, ensureSchema } from '@/lib/db'
 import { matchSlug } from '@/lib/slug'
 import NextOpponent, { type NextGameInfo } from '@/components/NextOpponent'
@@ -52,6 +52,47 @@ async function getDbMatchByApiId(apiGameId: string): Promise<DbMatch | null> {
   }
 }
 
+/** Birthdays today/tomorrow in America/Vancouver (BC local time). */
+async function getBirthdayAlerts(teamId: string): Promise<{ today: string[]; tomorrow: string[] }> {
+  const empty = { today: [] as string[], tomorrow: [] as string[] }
+  try {
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Vancouver', month: '2-digit', day: '2-digit' })
+    const mmdd = (d: Date) => fmt.formatToParts(d).filter((x) => x.type !== 'literal').map((x) => x.value).join('-')
+    const todayKey = mmdd(new Date())
+    const tomorrowKey = mmdd(new Date(Date.now() + 86_400_000))
+
+    const db = getDb()
+    const [bioRows, manualRows, rosterData] = await Promise.all([
+      db.execute('SELECT player_id, birthdate FROM player_bio WHERE birthdate IS NOT NULL'),
+      db.execute('SELECT name, birthdate FROM manual_players WHERE birthdate IS NOT NULL'),
+      fetchRoster(teamId).catch(() => null),
+    ])
+
+    const nameMap = new Map<string, string>()
+    for (const section of rosterData?.roster?.[0]?.sections ?? []) {
+      for (const { row } of section.data as Array<{ row: { player_id: string; name: string } }>) {
+        nameMap.set(row.player_id, row.name)
+      }
+    }
+
+    const all: { name: string; birthdate: string }[] = []
+    for (const row of bioRows.rows) {
+      const name = nameMap.get(String(row.player_id))
+      if (name) all.push({ name, birthdate: String(row.birthdate) })
+    }
+    for (const row of manualRows.rows) {
+      all.push({ name: String(row.name), birthdate: String(row.birthdate) })
+    }
+
+    return {
+      today: all.filter((b) => b.birthdate.slice(5) === todayKey).map((b) => b.name),
+      tomorrow: all.filter((b) => b.birthdate.slice(5) === tomorrowKey).map((b) => b.name),
+    }
+  } catch {
+    return empty
+  }
+}
+
 export default async function DashboardPage() {
   const teamId = process.env.TEAM_ID!
 
@@ -87,6 +128,8 @@ export default async function DashboardPage() {
   // If no official upcoming game, check the DB for manually added matches
   const nextManualMatch = !nextGame ? await getNextManualMatch(today) : null
 
+  const birthdays = await getBirthdayAlerts(teamId)
+
   // Hero props
   let hero: { opponentId: string; game: NextGameInfo } | null = null
   if (nextGame && nextOpponentId) {
@@ -95,6 +138,7 @@ export default async function DashboardPage() {
     hero = {
       opponentId: nextOpponentId,
       game: {
+        date: nextGame.date_played,
         dateLabel: nextGame.date_with_day,
         time: nextGame.scheduled_time,
         venue: nextGame.venue_name,
@@ -107,6 +151,7 @@ export default async function DashboardPage() {
     hero = {
       opponentId: nextManualMatch.opponent_team_id,
       game: {
+        date: nextManualMatch.date,
         dateLabel: new Date(nextManualMatch.date + 'T12:00:00').toLocaleDateString('en-CA', {
           weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
         }),
@@ -122,6 +167,22 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       {/* Recent results */}
       <RecentResults pastGames={past} teamId={teamId} />
+
+      {/* Birthday alerts */}
+      {(birthdays.today.length > 0 || birthdays.tomorrow.length > 0) && (
+        <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl px-5 py-3 flex flex-wrap items-center gap-x-8 gap-y-1 text-sm">
+          {birthdays.today.length > 0 && (
+            <span className="text-amber-200">
+              🎂 <span className="font-bold">Birthday today:</span> {birthdays.today.join(', ')}
+            </span>
+          )}
+          {birthdays.tomorrow.length > 0 && (
+            <span className="text-amber-200/70">
+              🎂 Birthday tomorrow: {birthdays.tomorrow.join(', ')}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Next opponent — hero */}
       {hero ? (
@@ -142,7 +203,7 @@ export default async function DashboardPage() {
             href={`/games/${matchSlug(nextManualMatch)}`}
             className="mt-2 self-start bg-grizzly-gold text-white text-sm font-bold px-5 py-2.5 rounded hover:bg-grizzly-gold/90 transition-colors"
           >
-            Build Lineup →
+            Build Lineup
           </a>
         </div>
       ) : (
