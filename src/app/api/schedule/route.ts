@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { fetchSchedule } from '@/lib/hockeytech'
+import { fetchSchedule, OUR_TEAM_ID } from '@/lib/hockeytech'
 import type { Game } from '@/types/hockey'
 
 export async function GET() {
   try {
-    const data = await fetchSchedule(process.env.TEAM_ID!)
+    const data = await fetchSchedule(OUR_TEAM_ID)
     const games: Game[] = data.SiteKit.Schedule ?? []
     const today = new Date().toISOString().split('T')[0]
 
@@ -18,7 +18,7 @@ export async function GET() {
 
     const nextGame = upcoming[0] ?? null
     const nextOpponentId = nextGame
-      ? nextGame.home_team === process.env.TEAM_ID
+      ? nextGame.home_team === OUR_TEAM_ID
         ? nextGame.visiting_team
         : nextGame.home_team
       : null

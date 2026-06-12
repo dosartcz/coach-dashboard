@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { fetchRoster, fetchPlayerStats, fetchSchedule, fetchGameSummary } from '@/lib/hockeytech'
+import { fetchRoster, fetchPlayerStats, fetchSchedule, fetchGameSummary, HT_CLIENT_CODE, OUR_TEAM_ID } from '@/lib/hockeytech'
 import { getDb, ensureSchema } from '@/lib/db'
 import { norm } from '@/lib/slug'
 import MatchLineupBuilder from '@/components/MatchLineupBuilder'
@@ -111,7 +111,7 @@ async function getLineup(matchId: string, type: 'opening' | 'alternative' | 'spe
 
 export default async function MatchDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const teamId = process.env.TEAM_ID!
+  const teamId = OUR_TEAM_ID
   const today = new Date().toISOString().split('T')[0]
 
   const match = await getMatch(slug)
@@ -214,7 +214,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ sl
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   })
 
-  const clientCode = process.env.HT_CLIENT!
+  const clientCode = HT_CLIENT_CODE
   const reportLinks = isApiGame
     ? {
         report: `https://lscluster.hockeytech.com/game_reports/official-game-report.php?client_code=${clientCode}&game_id=${match.api_game_id}&lang_id=1`,

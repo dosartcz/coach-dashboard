@@ -1,3 +1,4 @@
+import { OUR_TEAM_ID } from '@/lib/hockeytech'
 import type { Metadata, Viewport } from 'next'
 import { Anton } from 'next/font/google'
 import NavBar from '@/components/NavBar'
@@ -20,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`bg-grizzly-navy min-h-screen text-white ${anton.variable}`}>
-        <NavBar teamId={process.env.TEAM_ID ?? '19'} />
+        <NavBar teamId={OUR_TEAM_ID} />
         <main className="max-w-7xl mx-auto px-4 py-6">{children}</main>
         <footer className="max-w-7xl mx-auto px-4 py-4 text-center text-xs text-white/30 border-t border-white/10 mt-8">
           Official statistics provided by{' '}

@@ -1,24 +1,63 @@
 const BASE = 'https://lscluster.hockeytech.com/feed/index.php'
 
+// Public HockeyTech feed constants for the KIJHL (same key the league site uses).
+// Env vars override them, but none are required on deploy.
 const params = () => ({
-  key: process.env.HT_KEY!,
-  client_code: process.env.HT_CLIENT!,
-  league_id: process.env.HT_LEAGUE!,
-  site_id: process.env.HT_SITE!,
+  key: process.env.HT_KEY ?? '2589e0f644b1bb71',
+  client_code: process.env.HT_CLIENT ?? 'kijhl',
+  league_id: process.env.HT_LEAGUE ?? '1',
+  site_id: process.env.HT_SITE ?? '2',
   lang: 'en',
   fmt: 'json',
 })
+
+export const HT_CLIENT_CODE = process.env.HT_CLIENT ?? 'kijhl'
+
+/** Our team id (Revelstoke Grizzlies). Env var overrides for a different team. */
+export const OUR_TEAM_ID = process.env.TEAM_ID ?? '19'
 
 function buildUrl(extra: Record<string, string>) {
   const p = new URLSearchParams({ ...params(), ...extra })
   return `${BASE}?${p.toString()}`
 }
 
+/**
+ * Current season — detected automatically from the league feed:
+ * 1. `HT_SEASON` env var, when set (manual override)
+ * 2. the season whose start/end dates contain today (career seasons preferred)
+ * 3. the league's own default season (Parameters.season_id) — covers the off-season
+ * 4. the most recently started career season
+ */
+export async function getCurrentSeasonId(): Promise<string> {
+  if (process.env.HT_SEASON) return process.env.HT_SEASON
+  try {
+    const url = buildUrl({ feed: 'modulekit', view: 'seasons' })
+    const res = await fetch(url, { next: { revalidate: 3600 } })
+    const data = JSON.parse(await res.text())
+    const seasons: SeasonInfo[] = data.SiteKit?.Seasons ?? []
+    const today = new Date().toISOString().slice(0, 10)
+
+    const active =
+      seasons.find((s) => s.career === '1' && s.start_date <= today && today <= s.end_date) ??
+      seasons.find((s) => s.start_date <= today && today <= s.end_date)
+    if (active) return active.season_id
+
+    const leagueDefault = data.SiteKit?.Parameters?.season_id
+    if (leagueDefault) return String(leagueDefault)
+
+    const started = seasons
+      .filter((s) => s.career === '1' && s.start_date <= today)
+      .sort((a, b) => b.start_date.localeCompare(a.start_date))[0]
+    if (started) return started.season_id
+  } catch { /* fall through */ }
+  return '67' // last known season — only reached if the feed is down
+}
+
 export async function fetchRoster(teamId: string) {
   const url = buildUrl({
     feed: 'statviewfeed',
     view: 'roster',
-    season: process.env.HT_SEASON!,
+    season: await getCurrentSeasonId(),
     team_id: teamId,
   })
   const res = await fetch(url, { next: { revalidate: 3600 } })
@@ -32,7 +71,7 @@ export async function fetchPlayerStats(teamId?: string, season?: string) {
     feed: 'statviewfeed',
     view: 'players',
     context: 'overall',
-    season: season ?? process.env.HT_SEASON!,
+    season: season ?? (await getCurrentSeasonId()),
   }
   if (teamId) extra.team_id = teamId
   const url = buildUrl(extra)
@@ -43,34 +82,38 @@ export async function fetchPlayerStats(teamId?: string, season?: string) {
   return JSON.parse(json)
 }
 
+/**
+ * Regular-season + playoff ids for the current year.
+ * `playoffs` is always the "current" season id (used as the default stats context);
+ * `regular` is the matching regular season of the same year pair when it exists.
+ */
 export async function fetchSeasonIds(): Promise<{ regular: string | null; playoffs: string }> {
-  const playoffsId = process.env.HT_SEASON!
+  const current = await getCurrentSeasonId()
   try {
-    const url = buildUrl({ feed: 'modulekit', view: 'seasons' })
-    const res = await fetch(url, { next: { revalidate: 86400 } })
-    const text = await res.text()
-    const data = JSON.parse(text)
-    const seasons: Array<{ season_id: string; season_name: string; playoff: string; career: string }> =
-      data.SiteKit?.Seasons ?? []
-
-    const playoff = seasons.find((s) => s.season_id === playoffsId)
-    if (!playoff) return { regular: null, playoffs: playoffsId }
+    const seasons = await fetchSeasons()
+    const cur = seasons.find((s) => s.season_id === current)
+    if (!cur) return { regular: null, playoffs: current }
 
     // Match year pair e.g. "2025-26" or "2025/26"
-    const yearPair = playoff.season_name.match(/\d{4}[/-]\d{2,4}/)?.[0]
-    const regular = yearPair
-      ? seasons.find(
-          (s) =>
-            s.playoff === '0' &&
-            s.career === '1' &&
-            s.season_id !== playoffsId &&
-            s.season_name.replace(/-/g, '/').includes(yearPair.replace(/-/g, '/'))
-        )
-      : null
+    const yearPair = cur.season_name.match(/\d{4}[/-]\d{2,4}/)?.[0]?.replace(/-/g, '/')
+    const mate = (playoff: '0' | '1') =>
+      yearPair
+        ? seasons.find(
+            (s) =>
+              s.playoff === playoff &&
+              s.career === '1' &&
+              s.season_id !== current &&
+              s.season_name.replace(/-/g, '/').includes(yearPair)
+          )
+        : undefined
 
-    return { regular: regular?.season_id ?? null, playoffs: playoffsId }
+    if (cur.playoff === '1') {
+      return { regular: mate('0')?.season_id ?? null, playoffs: current }
+    }
+    // Current season is a regular season — playoffs may not be published yet
+    return { regular: current, playoffs: mate('1')?.season_id ?? current }
   } catch {
-    return { regular: null, playoffs: playoffsId }
+    return { regular: null, playoffs: current }
   }
 }
 
@@ -78,7 +121,7 @@ export async function fetchTeams() {
   const url = buildUrl({
     feed: 'modulekit',
     view: 'teamsbyseason',
-    season_id: process.env.HT_SEASON!,
+    season_id: await getCurrentSeasonId(),
   })
   const res = await fetch(url, { next: { revalidate: 86400 } })
   const text = await res.text()
@@ -95,14 +138,16 @@ export async function fetchTeams() {
 }
 
 export async function fetchSchedule(teamId: string, seasonId?: string) {
+  const current = await getCurrentSeasonId()
+  const sid = seasonId ?? current
   const url = buildUrl({
     feed: 'modulekit',
     view: 'schedule',
-    season_id: seasonId ?? process.env.HT_SEASON!,
+    season_id: sid,
     team_id: teamId,
   })
   // Older seasons never change — cache them for a day
-  const revalidate = seasonId && seasonId !== process.env.HT_SEASON ? 86400 : 600
+  const revalidate = sid !== current ? 86400 : 600
   const res = await fetch(url, { next: { revalidate } })
   const text = await res.text()
   return JSON.parse(text)
@@ -113,6 +158,8 @@ export interface SeasonInfo {
   season_name: string
   playoff: string
   career: string
+  start_date: string
+  end_date: string
 }
 
 /** All seasons known to the league, newest first. */
@@ -129,8 +176,8 @@ export async function fetchSeasons(): Promise<SeasonInfo[]> {
 export async function fetchGameSummary(gameId: string) {
   const p = new URLSearchParams({
     feed: 'gc',
-    key: process.env.HT_KEY!,
-    client_code: process.env.HT_CLIENT!,
+    key: params().key,
+    client_code: params().client_code,
     game_id: gameId,
     lang_code: 'en',
     fmt: 'json',
@@ -169,7 +216,7 @@ export async function fetchStandings(seasonId?: string): Promise<StandingsDivisi
     view: 'teams',
     groupTeamsBy: 'division',
     context: 'overall',
-    season: seasonId ?? process.env.HT_SEASON!,
+    season: seasonId ?? (await getCurrentSeasonId()),
     special: 'false',
   })
   const res = await fetch(url, { next: { revalidate: 600 } })

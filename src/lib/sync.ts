@@ -1,3 +1,4 @@
+import { OUR_TEAM_ID } from '@/lib/hockeytech'
 import { getDb, ensureSchema } from './db'
 import { fetchSchedule } from './hockeytech'
 import type { Game } from '@/types/hockey'
@@ -9,7 +10,7 @@ export async function syncGames(): Promise<{ inserted: number; skipped: number; 
   await ensureSchema()
   const db = getDb()
 
-  const teamId = process.env.TEAM_ID!
+  const teamId = OUR_TEAM_ID
   const scheduleData = await fetchSchedule(teamId)
   const games: Game[] = scheduleData.SiteKit.Schedule ?? []
 

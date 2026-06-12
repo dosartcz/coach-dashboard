@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { fetchPlayerStats, fetchSeasonIds, fetchSchedule, fetchSeasons } from '@/lib/hockeytech'
+import { fetchPlayerStats, fetchSeasonIds, fetchSchedule, fetchSeasons, getCurrentSeasonId, OUR_TEAM_ID } from '@/lib/hockeytech'
 import { TeamLogo } from './TeamLogo'
 import TopScorersWithToggle from './TopScorersWithToggle'
 import Countdown from './Countdown'
@@ -44,15 +44,15 @@ export default async function NextOpponent({ opponentId, game, gameDayMatch }: P
   const form = finished.slice(0, 5)
 
   // Head to head — search back through past seasons until we have 5 mutual games
-  const ourId = process.env.TEAM_ID!
+  const ourId = OUR_TEAM_ID
   const isMutual = (g: Game) => g.home_team === ourId || g.visiting_team === ourId
   let headToHead = finished.filter(isMutual)
   if (headToHead.length < 5) {
     try {
-      const seasons = await fetchSeasons()
+      const [seasons, currentSeasonId] = await Promise.all([fetchSeasons(), getCurrentSeasonId()])
       const pastSeasonIds = seasons
         .map((s) => s.season_id)
-        .filter((id) => id !== process.env.HT_SEASON)
+        .filter((id) => id !== currentSeasonId)
         .slice(0, 8)
       const pastSchedules = await Promise.all(
         pastSeasonIds.map((id) => fetchSchedule(opponentId, id).catch(() => null))

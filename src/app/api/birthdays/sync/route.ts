@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getDb, ensureSchema } from '@/lib/db'
-import { fetchRoster } from '@/lib/hockeytech'
+import { fetchRoster, OUR_TEAM_ID } from '@/lib/hockeytech'
 import type { RosterPlayer } from '@/types/hockey'
 
 export async function POST() {
   await ensureSchema()
   const db = getDb()
-  const teamId = process.env.TEAM_ID!
+  const teamId = OUR_TEAM_ID
 
   // Get current roster
   const rosterData = await fetchRoster(teamId)

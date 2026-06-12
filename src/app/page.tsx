@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { fetchSchedule, fetchPlayerStats, fetchSeasonIds, fetchRoster } from '@/lib/hockeytech'
+import { fetchSchedule, fetchPlayerStats, fetchSeasonIds, fetchRoster, OUR_TEAM_ID } from '@/lib/hockeytech'
 import { getDb, ensureSchema } from '@/lib/db'
 import { matchSlug } from '@/lib/slug'
 import NextOpponent, { type NextGameInfo } from '@/components/NextOpponent'
@@ -95,7 +95,7 @@ async function getBirthdayAlerts(teamId: string): Promise<{ today: string[]; tom
 }
 
 export default async function DashboardPage() {
-  const teamId = process.env.TEAM_ID!
+  const teamId = OUR_TEAM_ID
 
   const [scheduleData, statsRaw, seasonIds] = await Promise.all([
     fetchSchedule(teamId),

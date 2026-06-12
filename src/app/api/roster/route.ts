@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { fetchRoster, fetchPlayerStats } from '@/lib/hockeytech'
+import { fetchRoster, fetchPlayerStats, OUR_TEAM_ID } from '@/lib/hockeytech'
 import { getDb, ensureSchema } from '@/lib/db'
 import type { PlayerStats, RosterPlayer } from '@/types/hockey'
 
 export async function GET() {
-  const teamId = process.env.TEAM_ID!
+  const teamId = OUR_TEAM_ID
 
   const [rosterData, statsData] = await Promise.all([
     fetchRoster(teamId),

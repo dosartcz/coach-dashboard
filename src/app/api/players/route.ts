@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { fetchPlayerStats } from '@/lib/hockeytech'
+import { fetchPlayerStats, OUR_TEAM_ID } from '@/lib/hockeytech'
 import type { PlayerStats } from '@/types/hockey'
 
 export async function GET(req: NextRequest) {
-  const teamId = req.nextUrl.searchParams.get('teamId') ?? process.env.TEAM_ID!
+  const teamId = req.nextUrl.searchParams.get('teamId') ?? OUR_TEAM_ID
   const season = req.nextUrl.searchParams.get('season') ?? undefined
   try {
     const data = await fetchPlayerStats(teamId, season)
