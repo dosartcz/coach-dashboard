@@ -7,10 +7,19 @@ import './globals.css'
 const anton = Anton({ weight: '400', subsets: ['latin'], variable: '--font-display' })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+  ),
   title: 'Revelstoke Grizzlies Dashboard',
   description: 'KIJHL – Revelstoke Grizzlies Coach Dashboard',
   // Internal tool — keep out of search engines
   robots: { index: false, follow: false },
+  openGraph: {
+    title: 'Revelstoke Grizzlies Dashboard',
+    description: 'KIJHL – Revelstoke Grizzlies Coach Dashboard',
+    images: ['/og-image.jpg'],
+  },
 }
 
 export const viewport: Viewport = {
