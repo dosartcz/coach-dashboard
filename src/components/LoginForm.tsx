@@ -45,23 +45,23 @@ export default function LoginForm({ teamId }: { teamId: string }) {
       <div className="w-full max-w-sm">
         <div className="bg-black/50 backdrop-blur-sm border border-white/10 rounded-xl p-8">
           <div className="flex flex-col items-center mb-6">
-            <div className="mb-3"><TeamLogo teamId={teamId} size={64} /></div>
+            <div className="mb-4"><TeamLogo teamId={teamId} size={120} /></div>
             <h1 className="text-white font-bold text-lg">Coach Dashboard</h1>
             <p className="text-white/40 text-xs mt-1">Sign in to continue</p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-white/60 text-xs uppercase tracking-wider block mb-1">Password</label>
+              <label className="text-white/60 text-xs uppercase tracking-wider block mb-1 text-center">Password</label>
               <input
                 type="password"
                 autoFocus
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/10 text-white rounded px-3 py-2 text-sm border border-white/10 focus:outline-none focus:border-grizzly-gold"
+                className="w-full bg-white/10 text-white rounded px-3 py-2 text-sm border border-white/10 focus:outline-none focus:border-grizzly-gold text-center"
               />
             </div>
-            {error && <p className="text-red-400 text-sm">{error}</p>}
+            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
             <button
               type="submit"
               disabled={loading || !password}
