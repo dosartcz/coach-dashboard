@@ -36,7 +36,7 @@ Stav k 10. 6. 2026. TypeScript prochází bez chyb. Rozhodnutí: UI kompletně a
 
 **12. Chybí zadání místa/poznámky k manuálnímu zápasu na dashboardu.** Manuální zápas na dashboardu nezobrazuje čas, jen datum.
 
-**13. Mix češtiny v UI (sjednotit na EN).**
+**13. ✅ Mix češtiny v UI — sjednoceno na EN (UI texty i komentáře v kódu).**
 - `page.tsx` (dashboard): „Otevřít sestavu →" + datum v `cs-CZ` (zbytek aplikace `en-CA`)
 - `LineupBuilder.tsx`: export okno „Pravý klik → Uložit obrázek jako…", alert „Export selhal"
 - `PlayerStatsWithToggle` + `TopScorersWithToggle`: tab „Základní část" → „Regular Season"
