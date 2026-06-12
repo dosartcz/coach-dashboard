@@ -28,7 +28,9 @@ export default function GameDayActions({ match, venue, ourTeamId, className = ''
   const [show, setShow] = useState(false)
   const [busy, setBusy] = useState(false)
   const [photo, setPhoto] = useState<string | null>(match.result_photo ?? null)
-  const exportRef = useRef<HTMLDivElement>(null)
+  const [formats, setFormats] = useState({ square: true, story: false })
+  const squareRef = useRef<HTMLDivElement>(null)
+  const storyRef = useRef<HTMLDivElement>(null)
 
   async function handlePhotoUpload(file: File | undefined) {
     if (!file) return
@@ -41,20 +43,25 @@ export default function GameDayActions({ match, venue, ourTeamId, className = ''
     }).catch(() => {})
   }
 
-  async function renderPng(): Promise<string | null> {
-    if (!exportRef.current) return null
-    return toPng(exportRef.current, { cacheBust: true, pixelRatio: 1 })
+  async function renderPng(node: HTMLDivElement | null): Promise<string | null> {
+    if (!node) return null
+    return toPng(node, { cacheBust: true, pixelRatio: 1 })
   }
 
   async function handleDownload() {
     setBusy(true)
     try {
-      const dataUrl = await renderPng()
-      if (!dataUrl) return
-      const link = document.createElement('a')
-      link.download = `grizzlies-game-preview-${match.date}.png`
-      link.href = dataUrl
-      link.click()
+      const targets: Array<[HTMLDivElement | null, string]> = []
+      if (formats.square) targets.push([squareRef.current, `grizzlies-game-preview-${match.date}-1x1.png`])
+      if (formats.story) targets.push([storyRef.current, `grizzlies-game-preview-${match.date}-9x16.png`])
+      for (const [node, filename] of targets) {
+        const dataUrl = await renderPng(node)
+        if (!dataUrl) continue
+        const link = document.createElement('a')
+        link.download = filename
+        link.href = dataUrl
+        link.click()
+      }
     } catch (err) {
       console.error(err)
       alert('Export failed: ' + String(err))
@@ -66,16 +73,21 @@ export default function GameDayActions({ match, venue, ourTeamId, className = ''
   async function handlePreview() {
     setBusy(true)
     try {
-      const dataUrl = await renderPng()
-      if (!dataUrl) return
-      const win = window.open('', '_blank')
-      if (win) {
-        win.document.write(
-          `<html><head><title>Game Preview</title></head>` +
-          `<body style="margin:0;background:#1a1a1a;display:flex;align-items:flex-start;justify-content:center">` +
-          `<img src="${dataUrl}" style="max-width:100%;max-height:100vh;height:auto"></body></html>`
-        )
-        win.document.close()
+      const targets: Array<HTMLDivElement | null> = []
+      if (formats.square) targets.push(squareRef.current)
+      if (formats.story) targets.push(storyRef.current)
+      for (const node of targets) {
+        const dataUrl = await renderPng(node)
+        if (!dataUrl) continue
+        const win = window.open('', '_blank')
+        if (win) {
+          win.document.write(
+            `<html><head><title>Game Preview</title></head>` +
+            `<body style="margin:0;background:#1a1a1a;display:flex;align-items:flex-start;justify-content:center">` +
+            `<img src="${dataUrl}" style="max-width:100%;max-height:100vh;height:auto"></body></html>`
+          )
+          win.document.close()
+        }
       }
     } finally {
       setBusy(false)
@@ -104,6 +116,31 @@ export default function GameDayActions({ match, venue, ourTeamId, className = ''
             </button>
             <h3 className="text-white font-bold text-lg mb-1">Game Preview — Image</h3>
             <p className="text-white/40 text-xs mb-4">Square 1:1 with logos, date, venue and an optional photo.</p>
+
+            {/* Format selection */}
+            <div className="mb-4">
+              <label className="text-white/60 text-xs uppercase tracking-wider block mb-2">Formats</label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 text-sm text-white/80 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formats.square}
+                    onChange={(e) => setFormats((f) => ({ ...f, square: e.target.checked }))}
+                    className="accent-[#87703e] w-4 h-4"
+                  />
+                  1:1 (post)
+                </label>
+                <label className="flex items-center gap-2 text-sm text-white/80 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formats.story}
+                    onChange={(e) => setFormats((f) => ({ ...f, story: e.target.checked }))}
+                    className="accent-[#87703e] w-4 h-4"
+                  />
+                  9:16 (story)
+                </label>
+              </div>
+            </div>
 
             {/* Photo upload */}
             <div className="mb-4">
@@ -143,7 +180,7 @@ export default function GameDayActions({ match, venue, ourTeamId, className = ''
             <div className="flex gap-2 pt-2">
               <button
                 onClick={handleDownload}
-                disabled={busy}
+                disabled={busy || !(formats.square || formats.story)}
                 className="flex-1 bg-grizzly-gold text-white font-bold py-2 rounded hover:bg-grizzly-gold/90 transition-colors disabled:opacity-40"
               >
                 {busy ? 'Working…' : 'Download'}
@@ -151,7 +188,7 @@ export default function GameDayActions({ match, venue, ourTeamId, className = ''
               <button
                 type="button"
                 onClick={handlePreview}
-                disabled={busy}
+                disabled={busy || !(formats.square || formats.story)}
                 className="flex-1 bg-white/10 text-white font-semibold py-2 rounded hover:bg-white/20 transition-colors disabled:opacity-40"
               >
                 Preview
@@ -171,8 +208,11 @@ export default function GameDayActions({ match, venue, ourTeamId, className = ''
       {/* Hidden render target */}
       {show && (
         <div className="fixed -left-[9999px] top-0 pointer-events-none" aria-hidden>
-          <div ref={exportRef}>
-            <GameDayImage match={match} venue={venue} ourTeamId={ourTeamId} photo={photo} />
+          <div ref={squareRef}>
+            <GameDayImage match={match} venue={venue} ourTeamId={ourTeamId} photo={photo} format="square" />
+          </div>
+          <div ref={storyRef}>
+            <GameDayImage match={match} venue={venue} ourTeamId={ourTeamId} photo={photo} format="story" />
           </div>
         </div>
       )}
