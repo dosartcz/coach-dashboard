@@ -30,13 +30,13 @@ function gameResult(m: DbMatch): GameResult | undefined {
   const our = m.home_away === 'home' ? m.home_score : m.away_score
   const their = m.home_away === 'home' ? m.away_score : m.home_score
   const suffix = m.shootout ? ' SO' : m.overtime ? ' OT' : ''
+  // No ties in junior hockey — OT/SO always decides
   const won = our > their
-  const lost = our < their
   return {
     ourScore: our,
     theirScore: their,
-    label: `${won ? 'W' : lost ? 'L' : 'T'} ${our}–${their}${suffix}`,
-    color: won ? 'text-green-400' : lost ? 'text-red-400' : 'text-yellow-400',
+    label: `${won ? 'W' : 'L'} ${our}–${their}${suffix}`,
+    color: won ? 'text-green-400' : 'text-red-400',
   }
 }
 
@@ -58,6 +58,7 @@ export default function GamesPage() {
   const [venueMap, setVenueMap] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
+  const [syncResult, setSyncResult] = useState<string | null>(null)
   const PAGE_SIZE = 8
   const [showAdd, setShowAdd] = useState(false)
   const [form, setForm] = useState<AddGameForm>({ date: '', time: '', opponent_team_id: '', opponent_name: '', home_away: 'home', notes: '' })
@@ -109,13 +110,14 @@ export default function GamesPage() {
 
   async function handleSync() {
     setSyncing(true)
+    setSyncResult(null)
     try {
       const res = await fetch('/api/games/sync', { method: 'POST' })
       const data = await res.json()
-      alert(`Synced: ${data.inserted} new games imported (${data.total} total in schedule).`)
+      setSyncResult(`${data.inserted} new game${data.inserted !== 1 ? 's' : ''} added`)
       await loadGames()
     } catch {
-      alert('Sync failed. Check console.')
+      setSyncResult('Sync failed')
     } finally {
       setSyncing(false)
     }
@@ -170,7 +172,10 @@ export default function GamesPage() {
           <h2 className="text-white font-bold text-xl">Games</h2>
           <p className="text-white/40 text-sm mt-1">Manage games and lineups</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          {syncResult && (
+            <span className="text-white/40 text-xs">{syncResult}</span>
+          )}
           <button
             onClick={handleSync}
             disabled={syncing}

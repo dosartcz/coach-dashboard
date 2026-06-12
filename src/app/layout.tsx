@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="bg-grizzly-red border-b border-grizzly-gold/40">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <TeamLogo teamId="19" size={40} />
+              <TeamLogo teamId={process.env.TEAM_ID ?? '19'} size={40} />
               <div>
                 <h1 className="text-lg font-bold text-white leading-tight">Coach Dashboard</h1>
                 <p className="text-grizzly-gold text-xs font-medium">Revelstoke Grizzlies</p>

@@ -154,9 +154,12 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, e
       const colW = 42 // 3 name columns within the left half (12 + 3×42 = 138 < 148.5)
       let y = 16
 
+      // jsPDF's built-in helvetica has no diacritics — strip accents (Müller → Muller)
+      const ascii = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '')
+
       const playerText = (slot: LineupSlot) => {
         if (!slot.player) return '—'
-        const parts = slot.player.name.trim().split(' ')
+        const parts = ascii(slot.player.name.trim()).split(' ')
         const first = parts[0]
         const last = parts.slice(1).join(' ') || first
         return `#${slot.player.tp_jersey_number} ${last}, ${first[0]}.`
@@ -215,7 +218,7 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, e
       doc.setFontSize(9)
       doc.setFont('helvetica', 'normal')
       doc.setTextColor(60, 60, 60)
-      doc.text(`${match.date}  ·  ${match.home_away === 'home' ? 'vs' : '@'} ${match.opponent_name}`, margin, y)
+      doc.text(ascii(`${match.date}  ·  ${match.home_away === 'home' ? 'vs' : '@'} ${match.opponent_name}`), margin, y)
       y += 8
 
       // Opening

@@ -45,7 +45,7 @@ export default function GameResult({ ourScore, theirScore, suffix, teamId, oppon
           <div className="flex items-center gap-2 mt-2">
             <span className="text-gray-400 text-xs uppercase tracking-wider">{suffix}</span>
             <span className="text-gray-600 text-sm font-bold">
-              {weWon ? 'WIN' : weLost ? 'LOSS' : 'TIE'}
+              {weWon ? 'WIN' : 'LOSS'}
             </span>
           </div>
         </div>

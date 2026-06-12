@@ -36,7 +36,7 @@ export default function FinalScoreImage({ match, venue, ourTeamId, ourScore, the
       }
 
   const won = ourScore > theirScore
-  const resultLabel = `${suffix === 'OT' ? 'OT ' : suffix === 'SO' ? 'SO ' : ''}${won ? 'WIN' : ourScore < theirScore ? 'LOSS' : 'TIE'}`
+  const resultLabel = `${suffix === 'OT' ? 'OT ' : suffix === 'SO' ? 'SO ' : ''}${won ? 'WIN' : 'LOSS'}`
   const weAreHome = match.home_away === 'home'
   const homeScore = weAreHome ? ourScore : theirScore
   const awayScore = weAreHome ? theirScore : ourScore
