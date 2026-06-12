@@ -353,8 +353,8 @@ export default function PlayersPage() {
         <div className="text-white/40 text-sm text-center py-12">Loading…</div>
       ) : (
         <>
-          {/* Position filter tabs */}
-          <div className="flex rounded-lg overflow-hidden bg-black/20 w-fit">
+          {/* Position filter — tabs on desktop, dropdown on mobile */}
+          <div className="hidden sm:flex rounded-lg overflow-hidden bg-black/20 w-fit">
             {(['all', 'F', 'D', 'G'] as const).map((pos) => (
               <button
                 key={pos}
@@ -371,9 +371,26 @@ export default function PlayersPage() {
               </button>
             ))}
           </div>
+          <select
+            value={posFilter}
+            onChange={(e) => setPosFilter(e.target.value as 'all' | 'F' | 'D' | 'G')}
+            className="sm:hidden w-full bg-white/10 text-white rounded-lg px-3 py-2.5 text-sm font-semibold border border-white/10 focus:outline-none focus:border-grizzly-gold appearance-none"
+          >
+            {(['all', 'F', 'D', 'G'] as const).map((pos) => (
+              <option key={pos} value={pos} className="bg-[#1a1a1a]">
+                {pos === 'all' ? 'All' : pos === 'F' ? 'Forwards' : pos === 'D' ? 'Defence' : 'Goalies'}
+                {' ('}
+                {pos === 'all'
+                  ? players.length + manualPlayers.length
+                  : players.filter((p) => p.position === pos).length +
+                    manualPlayers.filter((p) => p.position === pos).length}
+                {')'}
+              </option>
+            ))}
+          </select>
 
           {/* API Players grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {filtered.map((player, i) => (
               <Link
                 key={player.player_id || `player-${i}`}
@@ -411,7 +428,7 @@ export default function PlayersPage() {
           {filteredManual.length > 0 && (
             <section>
               <h3 className="text-white/30 text-xs font-bold uppercase tracking-wider mb-3">Manually Added Players</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 {filteredManual.map((player) => (
                   <div key={player.id} className="relative group">
                   <Link

@@ -280,9 +280,9 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, e
 
   return (
     <div>
-      {/* Tabs + controls */}
-      <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:justify-between mb-4">
-        <div className="flex rounded-lg overflow-hidden bg-black/20 self-start max-w-full overflow-x-auto">
+      {/* Tabs + controls — tabs on desktop, dropdown on mobile */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between mb-4">
+        <div className="hidden sm:flex rounded-lg overflow-hidden bg-black/20 self-start">
           {(['opening', 'alternative', 'special'] as const).map((t) => (
             <button
               key={t}
@@ -297,6 +297,15 @@ export default function MatchLineupBuilder({ match, players, venue, ourTeamId, e
             </button>
           ))}
         </div>
+        <select
+          value={tab}
+          onChange={(e) => setTab(e.target.value as 'opening' | 'alternative' | 'special')}
+          className="sm:hidden w-full bg-white/10 text-white rounded-lg px-3 py-2.5 text-sm font-semibold border border-white/10 focus:outline-none focus:border-grizzly-gold appearance-none"
+        >
+          <option value="opening" className="bg-[#1a1a1a]">Starting Lineup</option>
+          <option value="alternative" className="bg-[#1a1a1a]">Alternative Lineup</option>
+          <option value="special" className="bg-[#1a1a1a]">Special Teams</option>
+        </select>
         <div className="flex items-center gap-3">
           {statusText && (
             <span className={`text-xs ${saveStatus === 'error' ? 'text-red-400' : 'text-white/40'}`}>

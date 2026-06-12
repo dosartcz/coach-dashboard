@@ -17,7 +17,7 @@ export default function RecentResults({ pastGames, teamId }: Props) {
     <div>
       <p className="text-white/50 text-xs font-bold uppercase tracking-wider mb-3">Recent Results</p>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-        {games.map((g) => {
+        {games.map((g, i) => {
           const isHome = g.home_team === teamId
           const opponentName = isHome ? g.visiting_team_name : g.home_team_name
           const slug = matchSlug({ date: g.date_played, opponent_name: opponentName })
@@ -26,7 +26,7 @@ export default function RecentResults({ pastGames, teamId }: Props) {
             weekday: 'short', month: 'short', day: 'numeric',
           })
           return (
-            <Link key={g.game_id} href={`/games/${slug}`} className="block group">
+            <Link key={g.game_id} href={`/games/${slug}`} className={`group ${i >= 2 ? 'hidden md:block' : 'block'}`}>
               <p className="text-white/40 text-[11px] mb-1.5 px-1">{dateLabel}</p>
               <div className="bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 flex items-center gap-3 group-hover:border-grizzly-gold/50 group-hover:bg-white/10 transition-colors">
                 <div className="flex-1 min-w-0 space-y-1.5">

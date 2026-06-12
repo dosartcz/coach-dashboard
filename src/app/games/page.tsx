@@ -400,16 +400,16 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
     <div className="relative group">
     <Link
       href={`/games/${matchSlug(game)}`}
-      className={`flex items-center gap-2 md:gap-4 rounded-xl px-3 md:px-4 py-3 border transition-colors ${
+      className={`flex flex-col md:flex-row items-center gap-1.5 md:gap-4 rounded-xl px-3 md:px-4 py-3 border transition-colors ${
       past
         ? 'bg-white/5 border-white/10 hover:border-white/30'
         : 'bg-white border-white/20 hover:border-grizzly-gold/60'
     }`}>
       {/* Date + time */}
-      <div className="w-24 md:w-40 flex-shrink-0">
+      <div className="md:w-40 flex-shrink-0 text-center md:text-left">
         <div className={`text-xs md:text-sm font-bold ${past ? 'text-white/50' : 'text-black'}`}>
           {new Date(game.date + 'T12:00:00').toLocaleDateString('en-CA', { weekday: 'short', month: 'short', day: 'numeric' })}
-          {game.time && <span className={`ml-2 block md:inline ${past ? 'text-white/30' : 'text-black/40'}`}>{game.time.slice(0, 5)}</span>}
+          {game.time && <span className={`ml-2 ${past ? 'text-white/30' : 'text-black/40'}`}>{game.time.slice(0, 5)}</span>}
         </div>
       </div>
 
@@ -423,13 +423,13 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
       </div>
 
       {/* Logo + name */}
-      <div className="flex items-center gap-3 flex-1 min-w-0 ml-2">
+      <div className="flex flex-col md:flex-row items-center gap-1.5 md:gap-3 flex-1 min-w-0 md:ml-2">
         {game.opponent_team_id && (
           <span style={{ opacity: past ? 0.6 : 1 }} className="shrink-0">
             <TeamLogo teamId={game.opponent_team_id} size={28} />
           </span>
         )}
-        <div className="min-w-0">
+        <div className="min-w-0 text-center md:text-left">
           <span className={`font-semibold truncate block ${past ? 'text-white/60' : 'text-black'}`}>
             {game.opponent_name}
           </span>
@@ -440,7 +440,7 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
       </div>
 
       {/* Result / lineup hint */}
-      <div className={`flex items-center gap-2 flex-shrink-0 ${past ? 'pr-5' : 'pr-5 md:pr-36'}`}>
+      <div className={`flex items-center justify-center gap-2 flex-shrink-0 ${past ? 'md:pr-5' : 'md:pr-36'}`}>
         {past ? (
           result && (
             <span className={`text-sm font-bold tabular-nums ${result.color}`}>
@@ -464,7 +464,7 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
     {canDelete && (
       <button
         onClick={onDelete}
-        className={`absolute right-3 top-1/2 -translate-y-1/2 text-sm transition-colors opacity-0 group-hover:opacity-100 leading-none ${
+        className={`absolute right-3 top-3 md:top-1/2 md:-translate-y-1/2 text-sm transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 leading-none ${
           past ? 'text-white/30 hover:text-red-400' : 'text-black/30 hover:text-red-500'
         }`}
       >
