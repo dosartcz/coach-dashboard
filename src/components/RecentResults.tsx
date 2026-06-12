@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { matchSlug } from '@/lib/slug'
 import { TeamLogo } from './TeamLogo'
 import type { Game } from '@/types/hockey'
@@ -25,7 +26,7 @@ export default function RecentResults({ pastGames, teamId }: Props) {
             weekday: 'short', month: 'short', day: 'numeric',
           })
           return (
-            <a key={g.game_id} href={`/games/${slug}`} className="block group">
+            <Link key={g.game_id} href={`/games/${slug}`} className="block group">
               <p className="text-white/40 text-[11px] mb-1.5 px-1">{dateLabel}</p>
               <div className="bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 flex items-center gap-3 group-hover:border-grizzly-gold/50 group-hover:bg-white/10 transition-colors">
                 <div className="flex-1 min-w-0 space-y-1.5">
@@ -44,7 +45,7 @@ export default function RecentResults({ pastGames, teamId }: Props) {
                 </div>
                 <span className="text-white/30 text-[10px] shrink-0">{status}</span>
               </div>
-            </a>
+            </Link>
           )
         })}
       </div>

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { ManualPlayer } from '@/types/hockey'
+import Link from 'next/link'
 import { playerSlug, manualPlayerSlug } from '@/lib/slug'
 import PlayerSilhouette from '@/components/PlayerSilhouette'
 
@@ -374,7 +375,7 @@ export default function PlayersPage() {
           {/* API Players grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {filtered.map((player, i) => (
-              <a
+              <Link
                 key={player.player_id || `player-${i}`}
                 href={`/roster/${playerSlug(player.name, player.birthdate_year)}`}
                 className="bg-white hover:bg-gray-50 rounded-xl overflow-hidden flex items-stretch border border-gray-100 hover:border-grizzly-gold/40 transition-colors shadow-sm group"
@@ -402,7 +403,7 @@ export default function PlayersPage() {
                     {player.status === 'not_available' && <span className="text-gray-700 font-bold leading-none" style={{ fontSize: '1rem' }}>⊘</span>}
                   </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -413,7 +414,7 @@ export default function PlayersPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {filteredManual.map((player) => (
                   <div key={player.id} className="relative group">
-                  <a
+                  <Link
                     href={`/roster/manual/${manualPlayerSlug(player)}`}
                     className="bg-white hover:bg-gray-50 rounded-xl overflow-hidden flex items-stretch border border-gray-100 hover:border-grizzly-gold/40 transition-colors shadow-sm"
                     style={{ height: 90 }}
@@ -447,7 +448,7 @@ export default function PlayersPage() {
                         {player.status === 'not_available' && <span className="text-gray-700 font-bold leading-none" style={{ fontSize: '1rem' }}>⊘</span>}
                       </div>
                     </div>
-                  </a>
+                  </Link>
                   {/* Delete button — sibling of the link (a button must not be nested in an anchor) */}
                   <button
                     onClick={() => handleDeleteManual(player.id)}

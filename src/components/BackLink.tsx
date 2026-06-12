@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 
 /** Back link that points to the page the user actually came from. */
 export default function BackLink() {
@@ -16,8 +17,8 @@ export default function BackLink() {
   }, [])
 
   return (
-    <a href={target.href} className="text-white/40 text-sm hover:text-grizzly-gold transition-colors">
+    <Link href={target.href} className="text-white/40 text-sm hover:text-grizzly-gold transition-colors">
       ← {target.label}
-    </a>
+    </Link>
   )
 }

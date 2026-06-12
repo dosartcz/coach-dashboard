@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import type { DbMatch } from '@/types/hockey'
 import { matchSlug } from '@/lib/slug'
 import { TeamLogo } from '@/components/TeamLogo'
@@ -392,7 +393,7 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
   const canDelete = !(past && game.type === 'api')
   return (
     <div className="relative group">
-    <a
+    <Link
       href={`/games/${matchSlug(game)}`}
       className={`flex items-center gap-4 rounded-xl px-4 py-3 border transition-colors ${
       past
@@ -447,7 +448,7 @@ function GameRow({ game, onDelete, past, result, ourTeamId, venue }: { game: DbM
           </span>
         )}
       </div>
-    </a>
+    </Link>
     {/* Game Preview export — upcoming rows only, sibling of the link */}
     {!past && ourTeamId && (
       <div className="absolute right-10 inset-y-0 flex items-center">

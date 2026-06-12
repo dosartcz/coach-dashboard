@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { fetchPlayerStats, fetchSeasonIds, fetchSchedule, fetchSeasons } from '@/lib/hockeytech'
 import { TeamLogo } from './TeamLogo'
 import TopScorersWithToggle from './TopScorersWithToggle'
@@ -93,12 +94,12 @@ export default async function NextOpponent({ opponentId, game, gameDayMatch }: P
         </div>
         <div className="flex flex-col items-stretch gap-2 flex-shrink-0 w-36">
           {game.lineupHref && (
-            <a
+            <Link
               href={game.lineupHref}
               className="bg-grizzly-gold text-white text-xs font-bold px-4 py-2 rounded hover:bg-grizzly-gold/90 transition-colors text-center"
             >
               Build Lineup
-            </a>
+            </Link>
           )}
           {gameDayMatch && <GameDayActions match={gameDayMatch} venue={game.venue} ourTeamId={ourId} className="w-full" />}
         </div>

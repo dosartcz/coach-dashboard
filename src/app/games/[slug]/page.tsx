@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { fetchRoster, fetchPlayerStats, fetchSchedule, fetchGameSummary } from '@/lib/hockeytech'
 import { getDb, ensureSchema } from '@/lib/db'
 import { norm } from '@/lib/slug'
@@ -119,7 +120,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ sl
     return (
       <div className="text-center py-24 text-white/40">
         Game not found.{' '}
-        <a href="/games" className="underline text-grizzly-gold">Back to games</a>
+        <Link href="/games" className="underline text-grizzly-gold">Back to games</Link>
       </div>
     )
   }

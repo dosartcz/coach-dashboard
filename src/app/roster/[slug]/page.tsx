@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import type { PlayerNote } from '@/types/hockey'
+import Link from 'next/link'
 import { playerSlug } from '@/lib/slug'
 import PlayerSilhouette from '@/components/PlayerSilhouette'
 
@@ -182,7 +183,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ slug: s
     return (
       <div className="text-center py-24 text-white/40">
         Player not found.{' '}
-        <a href="/roster" className="underline text-grizzly-gold">Back to roster</a>
+        <Link href="/roster" className="underline text-grizzly-gold">Back to roster</Link>
       </div>
     )
   }
@@ -215,9 +216,9 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ slug: s
 
   return (
     <div className="space-y-6">
-      <a href="/roster" className="text-white/40 text-sm hover:text-grizzly-gold transition-colors">
+      <Link href="/roster" className="text-white/40 text-sm hover:text-grizzly-gold transition-colors">
         ← Roster
-      </a>
+      </Link>
 
       {/* Profile card — white bg, full width */}
       <div className="bg-white rounded-xl overflow-hidden flex items-stretch shadow-lg gap-4" style={{ height: 160 }}>

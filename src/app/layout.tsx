@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { Anton } from 'next/font/google'
 import { TeamLogo } from '@/components/TeamLogo'
 import './globals.css'
@@ -30,13 +31,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 { href: '/games', label: 'Games' },
                 { href: '/schedule', label: 'Schedule' },
               ].map(({ href, label }) => (
-                <a
+                <Link
                   key={label}
                   href={href}
                   className="px-4 py-2 rounded text-sm font-medium text-white/80 hover:text-grizzly-gold hover:bg-white/5 transition-colors"
                 >
                   {label}
-                </a>
+                </Link>
               ))}
               <a
                 href="/api/auth/logout"

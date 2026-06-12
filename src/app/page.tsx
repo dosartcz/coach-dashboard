@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { fetchSchedule, fetchPlayerStats, fetchSeasonIds, fetchRoster } from '@/lib/hockeytech'
 import { getDb, ensureSchema } from '@/lib/db'
 import { matchSlug } from '@/lib/slug'
@@ -201,12 +202,12 @@ export default async function DashboardPage() {
             })}
             {nextManualMatch.time && ` · ${nextManualMatch.time.slice(0, 5)}`}
           </p>
-          <a
+          <Link
             href={`/games/${matchSlug(nextManualMatch)}`}
             className="mt-2 self-start bg-grizzly-gold text-white text-xs font-bold px-4 py-2 rounded hover:bg-grizzly-gold/90 transition-colors"
           >
             Build Lineup
-          </a>
+          </Link>
         </div>
       ) : (
         <div className="bg-white/5 rounded-xl border border-white/10 p-10 text-center text-white/40 text-sm">

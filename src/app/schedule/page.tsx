@@ -1,13 +1,15 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import type { DbMatch, DbEvent } from '@/types/hockey'
 import { matchSlug } from '@/lib/slug'
 import { TeamLogo } from '@/components/TeamLogo'
 
+// Club palette: red = games, gold = training, muted red = meetings
 const EVENT_COLORS: Record<string, string> = {
   game:     'bg-grizzly-red text-white',
-  training: 'bg-blue-700/80 text-white',
-  meeting:  'bg-purple-700/80 text-white',
+  training: 'bg-grizzly-gold text-white',
+  meeting:  'bg-grizzly-red/40 text-white',
   other:    'bg-white/20 text-white',
 }
 
@@ -445,7 +447,7 @@ export default function SchedulePage() {
                         {items.map((item, ii) => (
                           <div key={ii} className="group/item relative flex items-center">
                             {item.link ? (
-                              <a
+                              <Link
                                 href={item.link}
                                 onClick={(e) => e.stopPropagation()}
                                 className={`flex-1 block text-[10px] font-medium px-1.5 py-0.5 rounded truncate ${item.color} ${item.id ? 'pr-4' : ''}`}
@@ -453,7 +455,7 @@ export default function SchedulePage() {
                               >
                                 {item.time && <span className="opacity-70">{item.time.slice(0, 5)} </span>}
                                 {item.label}
-                              </a>
+                              </Link>
                             ) : (
                               <div
                                 className={`flex-1 block text-[10px] font-medium px-1.5 py-0.5 rounded truncate ${item.color} ${item.id ? 'pr-4' : ''}`}
