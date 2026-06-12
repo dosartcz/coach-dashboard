@@ -203,7 +203,7 @@ export default async function DashboardPage() {
           </p>
           <a
             href={`/games/${matchSlug(nextManualMatch)}`}
-            className="mt-2 self-start bg-grizzly-gold text-white text-sm font-bold px-5 py-2.5 rounded hover:bg-grizzly-gold/90 transition-colors"
+            className="mt-2 self-start bg-grizzly-gold text-white text-xs font-bold px-4 py-2 rounded hover:bg-grizzly-gold/90 transition-colors"
           >
             Build Lineup
           </a>

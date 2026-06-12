@@ -84,23 +84,23 @@ export default async function NextOpponent({ opponentId, game, gameDayMatch }: P
       <div className="p-6 border-b border-white/10 flex items-center gap-6 bg-white">
         <TeamLogo teamId={opponentId} size={88} />
         <div className="flex-1 min-w-0">
-          <p className="text-grizzly-gold text-xs font-bold uppercase tracking-wider">Next Opponent</p>
+          <p className="text-grizzly-gold text-xs font-bold uppercase tracking-wider">Upcoming Game</p>
           <h2 className="text-gray-900 font-black text-3xl leading-tight mt-1 truncate">
             {game.opponentName}
           </h2>
           <p className="text-gray-500 text-sm mt-2">{detailItems.join(' · ')}</p>
           <Countdown date={game.date} time={game.time} />
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {gameDayMatch && <GameDayActions match={gameDayMatch} venue={game.venue} ourTeamId={ourId} />}
+        <div className="flex flex-col items-stretch gap-2 flex-shrink-0 w-36">
           {game.lineupHref && (
             <a
               href={game.lineupHref}
-              className="bg-grizzly-gold text-white text-sm font-bold px-5 py-2.5 rounded hover:bg-grizzly-gold/90 transition-colors"
+              className="bg-grizzly-gold text-white text-xs font-bold px-4 py-2 rounded hover:bg-grizzly-gold/90 transition-colors text-center"
             >
               Build Lineup
             </a>
           )}
+          {gameDayMatch && <GameDayActions match={gameDayMatch} venue={game.venue} ourTeamId={ourId} className="w-full" />}
         </div>
       </div>
 

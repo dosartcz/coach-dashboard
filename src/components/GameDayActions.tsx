@@ -8,6 +8,8 @@ interface Props {
   match: DbMatch
   venue?: string | null
   ourTeamId: string
+  /** Extra classes for the trigger button (e.g. w-full in stacked layouts) */
+  className?: string
 }
 
 /** Downscale an uploaded photo to a reasonable JPEG data URL. */
@@ -22,7 +24,7 @@ async function fileToDataUrl(file: File, maxWidth = 1600): Promise<string> {
 }
 
 /** "Game Preview" announce image export for upcoming games — button + modal. */
-export default function GameDayActions({ match, venue, ourTeamId }: Props) {
+export default function GameDayActions({ match, venue, ourTeamId, className = '' }: Props) {
   const [show, setShow] = useState(false)
   const [busy, setBusy] = useState(false)
   const [photo, setPhoto] = useState<string | null>(match.result_photo ?? null)
@@ -84,7 +86,7 @@ export default function GameDayActions({ match, venue, ourTeamId }: Props) {
     <>
       <button
         onClick={() => setShow(true)}
-        className="bg-[#2e2e2e] text-white text-xs font-bold px-4 py-2 rounded hover:bg-[#3a3a3a] transition-colors"
+        className={`bg-[#2e2e2e] text-white text-xs font-bold px-4 py-2 rounded hover:bg-[#3a3a3a] transition-colors ${className}`}
       >
         Game Preview
       </button>
